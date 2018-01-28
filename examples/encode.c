@@ -117,6 +117,8 @@ int main(void)
 		midi_encode(&ostream, &messages[i]);
 	}
 
+	/* All messages are now encoded in the buffer. */
+
 	printf("\nDecoded messages:\n");
 	while (true) {
 		struct midi_message *message = midi_decode(&istream);
