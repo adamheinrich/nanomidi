@@ -55,6 +55,7 @@ static int write_buffer(void *param, const char *data, size_t size)
 int main(void)
 {
 	static const struct midi_message messages[] = {
+		/* Channel Mode Messages: */
 		{ .status = MIDI_STATUS_NOTE_ON, .channel = 2,
 		  .data.note_on.note = 48, .data.note_on.velocity = 10 },
 		{ .status = MIDI_STATUS_NOTE_OFF, .channel = 2,
@@ -71,6 +72,14 @@ int main(void)
 		  .data.channel_pressure.pressure = 90 },
 		{ .status = MIDI_STATUS_PITCH_BEND, .channel = 2,
 		  .data.pitch_bend.value = 1234 },
+
+		/* System Common Messages: */
+		{ .status = MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME,
+		  .data.system_time_code_quarter_frame.value = 101 },
+		{ .status = MIDI_STATUS_SYSTEM_SONG_POSITION,
+		  .data.system_song_position.position = 1917 },
+		{ .status = MIDI_STATUS_SYSTEM_SONG_SELECT,
+		  .data.system_song_select.song = 92 },
 	};
 
 	struct midi_istream istream = { .read_cb = &read_buffer };

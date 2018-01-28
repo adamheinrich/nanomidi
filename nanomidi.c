@@ -22,6 +22,12 @@
 
 #define DATA_BYTE(data)		((char)((data) & 0x7f))
 
+enum midi_status_system {
+	MIDI_STATUS_SYSTEM = 0xf0,
+	MIDI_STATUS_SYSTEM_SOX = 0xf1,
+	MIDI_STATUS_SYSTEM_EOX = 0xf7,
+};
+
 static size_t data_size(struct midi_message *msg)
 {
 	size_t length;
@@ -32,10 +38,13 @@ static size_t data_size(struct midi_message *msg)
 	case MIDI_STATUS_POLYPHONIC_PRESSURE:
 	case MIDI_STATUS_CONTROL_CHANGE:
 	case MIDI_STATUS_PITCH_BEND:
+	case MIDI_STATUS_SYSTEM_SONG_POSITION:
 		length = 2;
 		break;
 	case MIDI_STATUS_PROGRAM_CHANGE:
 	case MIDI_STATUS_CHANNEL_PRESSURE:
+	case MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME:
+	case MIDI_STATUS_SYSTEM_SONG_SELECT:
 		length = 1;
 		break;
 	default:
@@ -87,6 +96,20 @@ static bool decode_data(struct midi_message *msg, char c, size_t bytes_left)
 			msg->data.pitch_bend.value |= msb;
 		}
 		break;
+	case MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME:
+		msg->data.system_time_code_quarter_frame.value = DATA_BYTE(c);
+		break;
+	case MIDI_STATUS_SYSTEM_SONG_POSITION:
+		if (bytes_left == 2) {
+			msg->data.system_song_position.position = DATA_BYTE(c);
+		} else {
+			uint16_t msb = (DATA_BYTE(c) << 7);
+			msg->data.system_song_position.position |= msb;
+		}
+		break;
+	case MIDI_STATUS_SYSTEM_SONG_SELECT:
+		msg->data.system_song_select.song = DATA_BYTE(c);
+		break;
 	default:
 		return false;
 	}
@@ -104,8 +127,14 @@ bool midi_decode(struct midi_istream *stream, struct midi_message *msg)
 	while (stream->read_cb(stream->param, &c, 1) == 1) {
 		bool is_status_byte = ((c & 0x80) != 0);
 		if (is_status_byte) {
-			msg->status = ((uint8_t)c >> 4);
-			msg->channel = (c & 0x0f);
+			int status = (c & 0xff);
+			if (status >= MIDI_STATUS_SYSTEM) {
+				msg->status = status;
+				msg->channel = 0;
+			} else {
+				msg->status = (status & 0xf0);
+				msg->channel = (c & 0x0f);
+			}
 			stream->bytes_left = data_size(msg);
 		} else {
 			if (stream->bytes_left == 0) /* Running status */
@@ -168,13 +197,31 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 		buffer[1] = DATA_BYTE(msg->data.pitch_bend.value);
 		buffer[2] = DATA_BYTE(msg->data.pitch_bend.value >> 7);
 		break;
+	case MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME:
+		length = 2;
+		buffer[1] = DATA_BYTE(msg->data.system_time_code_quarter_frame.value);
+		break;
+	case MIDI_STATUS_SYSTEM_SONG_POSITION:
+		length = 3;
+		buffer[1] = DATA_BYTE(msg->data.system_song_position.position);
+		buffer[2] = DATA_BYTE(msg->data.system_song_position.position >> 7);
+		break;
+	case MIDI_STATUS_SYSTEM_SONG_SELECT:
+		length = 2;
+		buffer[1] = DATA_BYTE(msg->data.system_song_select.song);
+		break;
 	default:
 		length = 0;
 		break;
 	}
 
 	if (length > 0) {
-		buffer[0] = (char)((msg->status << 4) | (msg->channel & 0x0f));
+		if (msg->status >= (unsigned int)MIDI_STATUS_SYSTEM) {
+			buffer[0] = msg->status;
+		} else {
+			buffer[0] = (char)(msg->status & 0xf0);
+			buffer[0] = (char)(buffer[0] | (msg->channel & 0x0f));
+		}
 
 		int n = stream->write_cb(stream->param, buffer, length);
 		return (n == (int)length);

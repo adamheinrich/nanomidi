@@ -25,14 +25,19 @@
 #include <stdbool.h>
 
 enum midi_status {
-	MIDI_STATUS_NOTE_ON = 0x08,
-	MIDI_STATUS_NOTE_OFF,
-	MIDI_STATUS_POLYPHONIC_PRESSURE,
-	MIDI_STATUS_CONTROL_CHANGE,
-	MIDI_STATUS_PROGRAM_CHANGE,
-	MIDI_STATUS_CHANNEL_PRESSURE,
-	MIDI_STATUS_PITCH_BEND,
-	/* TODO: Implement MIDI_STATUS_SYSTEM */
+	/* Channel Mode Messages: */
+	MIDI_STATUS_NOTE_ON = 0x80,
+	MIDI_STATUS_NOTE_OFF = 0x90,
+	MIDI_STATUS_POLYPHONIC_PRESSURE = 0xa0,
+	MIDI_STATUS_CONTROL_CHANGE = 0xb0,
+	MIDI_STATUS_PROGRAM_CHANGE = 0xc0,
+	MIDI_STATUS_CHANNEL_PRESSURE = 0xd0,
+	MIDI_STATUS_PITCH_BEND = 0xe0,
+
+	/* System Common Messages: */
+	MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME = 0xf1,
+	MIDI_STATUS_SYSTEM_SONG_POSITION = 0xf2,
+	MIDI_STATUS_SYSTEM_SONG_SELECT = 0xf3,
 };
 
 struct midi_message {
@@ -64,6 +69,15 @@ struct midi_message {
 		struct pitch_bend {
 			uint16_t value;
 		} pitch_bend;
+		struct system_time_code_quarter_frame {
+			uint8_t value;
+		} system_time_code_quarter_frame;
+		struct system_song_position {
+			uint16_t position;
+		} system_song_position;
+		struct system_song_select {
+			uint8_t song;
+		} system_song_select;
 	} data;
 };
 

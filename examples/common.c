@@ -34,6 +34,18 @@ void print_msg(const struct midi_message *msg)
 		printf("PITCH_BEND: ch=%u, value=%u\n", msg->channel,
 		       msg->data.pitch_bend.value);
 		break;
+	case MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME:
+		printf("SYSTEM_TIME_CODE_QUARTER_FRAME: value=%u\n",
+		       msg->data.system_time_code_quarter_frame.value);
+		break;
+	case MIDI_STATUS_SYSTEM_SONG_POSITION:
+		printf("SYSTEM_SONG_POSITION: position=%u\n",
+		       msg->data.system_song_position.position);
+		break;
+	case MIDI_STATUS_SYSTEM_SONG_SELECT:
+		printf("SYSTEM_SONG_SELECT: song=%u\n",
+		       msg->data.system_song_select.song);
+		break;
 	default:
 		printf("UNKNOWN: %u\n", msg->status);
 		break;
