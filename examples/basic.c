@@ -19,8 +19,7 @@
 
 #include <stdio.h>
 #include <nanomidi.h>
-
-void print_msg(const struct midi_message *msg);
+#include "common.h"
 
 static char buffer[1024];
 static size_t buffer_wr; /* Write index */

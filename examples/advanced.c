@@ -20,8 +20,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <nanomidi.h>
-
-void print_msg(const struct midi_message *msg);
+#include "common.h"
 
 static const uint8_t buffer[] = {
 	0x81, 48, 64,		/* NOTE_ON: ch=1, note=48, velocity=64 */
