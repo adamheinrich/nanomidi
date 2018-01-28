@@ -56,31 +56,39 @@ int main(void)
 {
 	static const struct midi_message messages[] = {
 		/* Channel Mode Messages: */
-		{ .status = MIDI_STATUS_NOTE_ON, .channel = 2,
+		{ .type = MIDI_TYPE_NOTE_ON, .channel = 2,
 		  .data.note_on.note = 48, .data.note_on.velocity = 10 },
-		{ .status = MIDI_STATUS_NOTE_OFF, .channel = 2,
+		{ .type = MIDI_TYPE_NOTE_OFF, .channel = 2,
 		  .data.note_off.note = 48 },
-		{ .status = MIDI_STATUS_POLYPHONIC_PRESSURE, .channel = 2,
+		{ .type = MIDI_TYPE_POLYPHONIC_PRESSURE, .channel = 2,
 		  .data.polyphonic_pressure.note = 68,
 		  .data.polyphonic_pressure.pressure = 64 },
-		{ .status = MIDI_STATUS_CONTROL_CHANGE, .channel = 2,
+		{ .type = MIDI_TYPE_CONTROL_CHANGE, .channel = 2,
 		  .data.control_change.controller = 5,
 		  .data.control_change.value = 100 },
-		{ .status = MIDI_STATUS_PROGRAM_CHANGE, .channel = 2,
+		{ .type = MIDI_TYPE_PROGRAM_CHANGE, .channel = 2,
 		  .data.program_change.program = 42 },
-		{ .status = MIDI_STATUS_CHANNEL_PRESSURE, .channel = 2,
+		{ .type = MIDI_TYPE_CHANNEL_PRESSURE, .channel = 2,
 		  .data.channel_pressure.pressure = 90 },
-		{ .status = MIDI_STATUS_PITCH_BEND, .channel = 2,
+		{ .type = MIDI_TYPE_PITCH_BEND, .channel = 2,
 		  .data.pitch_bend.value = 1234 },
 
 		/* System Common Messages: */
-		{ .status = MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME,
+		{ .type = MIDI_TYPE_TIME_CODE_QUARTER_FRAME,
 		  .data.system_time_code_quarter_frame.value = 101 },
-		{ .status = MIDI_STATUS_SYSTEM_SONG_POSITION,
+		{ .type = MIDI_TYPE_SONG_POSITION,
 		  .data.system_song_position.position = 1917 },
-		{ .status = MIDI_STATUS_SYSTEM_SONG_SELECT,
+		{ .type = MIDI_TYPE_SONG_SELECT,
 		  .data.system_song_select.song = 92 },
-		{ .status = MIDI_STATUS_SYSTEM_TUNE_REQUEST },
+		{ .type = MIDI_TYPE_TUNE_REQUEST },
+
+		/* System Real Time Messages: */
+		{ .type = MIDI_TYPE_TIMING_CLOCK },
+		{ .type = MIDI_TYPE_START },
+		{ .type = MIDI_TYPE_CONTINUE },
+		{ .type = MIDI_TYPE_STOP },
+		{ .type = MIDI_TYPE_ACTIVE_SENSE },
+		{ .type = MIDI_TYPE_SYSTEM_RESET },
 	};
 
 	struct midi_istream istream = { .read_cb = &read_buffer };
