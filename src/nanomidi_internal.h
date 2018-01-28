@@ -28,4 +28,4 @@ enum midi_type_system {
 	MIDI_TYPE_EOX = 0xf7,
 };
 
-#endif
+#endif /* NANOMIDI_INTERNAL_H */
