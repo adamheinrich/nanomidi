@@ -188,8 +188,10 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 			}
 		} else {
 			/* Channel Mode or System Common Message data: */
-			if (stream->bytes_left == 0) /* Running type */
+			if (stream->bytes_left == 0) {
+				/* Running Status: */
 				stream->bytes_left = data_size(&stream->msg);
+			}
 
 			if (stream->bytes_left > 0) {
 				if (decode_data(&stream->msg, c,
