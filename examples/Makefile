@@ -22,14 +22,16 @@ TARGETS += example-advanced
 
 NANOMIDI_DIR = ..
 
-HEADERS = $(wildcard $(NANOMIDI_DIR)/*.h)
-SOURCES = $(wildcard $(NANOMIDI_DIR)/*.c)
+HEADERS := $(wildcard $(NANOMIDI_DIR)/include/*.h)
+SOURCES := $(wildcard $(NANOMIDI_DIR)/src/*.c)
+HEADERS += $(wildcard *.h)
 SOURCES += common.c
+
 OBJECTS = $(patsubst %.c, %.o, $(SOURCES))
 
 CC := gcc
 
-CFLAGS = -std=c99 -g -Wall -pedantic -I$(NANOMIDI_DIR)
+CFLAGS = -std=c99 -g -Wall -pedantic -I$(NANOMIDI_DIR)/include
 CFLAGS += -Wextra -Wconversion -Wdouble-promotion -Wfloat-conversion
 LDFLAGS = $(CFLAGS)
 
@@ -48,4 +50,5 @@ example-advanced: $(OBJECTS) advanced.o
 .PHONY: clean
 clean:
 	rm -f *.o
+	rm -f $(NANOMIDI_DIR)/src/*.o
 	rm -f $(TARGETS)
