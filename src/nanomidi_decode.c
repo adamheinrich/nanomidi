@@ -145,20 +145,49 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 		if (is_type_byte) {
 			int type = (c & 0xff);
 			if (is_realtime_message(type)) {
+				/* System Real Time Message: */
 				stream->rtmsg.type = type;
 				return &stream->rtmsg;
+			} else if (type == MIDI_TYPE_SOX) {
+				/* SysEx Message start: */
+				stream->msg.type = MIDI_TYPE_SYSEX;
+				stream->msg.channel = 0;
+				stream->bytes_left = 0;
+				continue;
+			} else if (type == MIDI_TYPE_EOX) {
+				/* SysEx Message end: */
+				char *data = stream->sysex_buffer.data;
+				int len = stream->bytes_left;
+				if (len < 0)
+					len = 0;
+				stream->msg.data.sysex.data = data;
+				stream->msg.data.sysex.length = (size_t)len;
+				return &stream->msg;
 			} else if (type >= MIDI_TYPE_SYSTEM_BASE) {
+				/* System Common Message: */
 				stream->msg.type = type;
 				stream->msg.channel = 0;
 			} else {
+				/* Channel Mode Message: */
 				stream->msg.type = (type & 0xf0);
 				stream->msg.channel = (c & 0x0f);
 			}
 
 			stream->bytes_left = data_size(&stream->msg);
-			if (stream->bytes_left == 0) /* Message with no data */
+			if (stream->bytes_left == 0) {
+				/* Message with no data */
 				return &stream->msg;
+			}
+		} else if (stream->msg.type == MIDI_TYPE_SYSEX) {
+			/* SysEx Message data: */
+			int pos = stream->bytes_left;
+			if (stream->sysex_buffer.data != NULL &&
+			    pos < (int)stream->sysex_buffer.size) {
+				stream->sysex_buffer.data[pos] = c;
+				stream->bytes_left++;
+			}
 		} else {
+			/* Channel Mode or System Common Message data: */
 			if (stream->bytes_left == 0) /* Running type */
 				stream->bytes_left = data_size(&stream->msg);
 

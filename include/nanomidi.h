@@ -47,6 +47,10 @@ enum midi_type {
 	MIDI_TYPE_STOP = 0xfc,
 	MIDI_TYPE_ACTIVE_SENSE = 0xfe,
 	MIDI_TYPE_SYSTEM_RESET = 0xff,
+
+	/* System Exclusive Messages (SysEx): */
+	MIDI_TYPE_SYSEX = 0x00,
+	MIDI_TYPE_SYSTEM_EXCLUSIVE = MIDI_TYPE_SYSEX,
 };
 
 struct midi_message {
@@ -87,6 +91,10 @@ struct midi_message {
 		struct song_select {
 			uint8_t song;
 		} song_select;
+		struct sysex {
+			const char *data;
+			size_t length;
+		} sysex;
 	} data;
 };
 
@@ -94,6 +102,10 @@ struct midi_istream {
 	int (*read_cb)(void *param, char *data, size_t size);
 	struct midi_message msg;
 	struct midi_message rtmsg;
+	struct sysex_buffer {
+		char *data;
+		size_t size;
+	} sysex_buffer;
 	int bytes_left;
 	void *param;
 };

@@ -19,6 +19,7 @@
 
 TARGETS := example-basic
 TARGETS += example-advanced
+TARGETS += example-sysex
 
 NANOMIDI_DIR = ..
 
@@ -45,6 +46,9 @@ example-basic: $(OBJECTS) basic.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 example-advanced: $(OBJECTS) advanced.o
+	$(CC) $^ $(LDFLAGS) -o $@
+
+example-sysex: $(OBJECTS) sysex.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 .PHONY: clean

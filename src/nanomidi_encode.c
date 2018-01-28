@@ -101,6 +101,20 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 
 		int n = stream->write_cb(stream->param, buffer, length);
 		return (n == (int)length);
+	} else if (msg->type == MIDI_TYPE_SYSEX) {
+		buffer[0] = (char)MIDI_TYPE_SOX;
+		buffer[1] = (char)MIDI_TYPE_EOX;
+
+		int n = stream->write_cb(stream->param, buffer, 1);
+
+		const char *data = msg->data.sysex.data;
+		if (data != NULL) {
+			length = msg->data.sysex.length;
+			n += stream->write_cb(stream->param, data, length);
+		}
+
+		n += stream->write_cb(stream->param, &buffer[1], 1);
+		return (n == (int)length+2);
 	}
 
 	return false;

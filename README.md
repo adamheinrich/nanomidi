@@ -14,10 +14,7 @@ Implemented:
  - Data structures for **System Common Messages**
  - Support for **System Real Time Messages** (single-byte messages which can
    occur anywhere in the stream
-
-Not implemented:
-
- - Support for System Exclusive Messages
+ - Support for **System Exclusive Messages**
 
 ## License
 

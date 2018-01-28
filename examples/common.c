@@ -20,6 +20,22 @@
 #include "common.h"
 #include <stdio.h>
 
+void print_sysex_msg(const struct midi_message *msg)
+{
+	printf("SysEx: { ");
+	if (msg->data.sysex.data == NULL) {
+		printf("NULL");
+	} else {
+		for (size_t i = 0; i < msg->data.sysex.length; i++) {
+			if (i < msg->data.sysex.length-1)
+				printf("0x%02x, ", msg->data.sysex.data[i]);
+			else
+				printf("0x%02x", msg->data.sysex.data[i]);
+		}
+	}
+	printf(" }\n");
+}
+
 void print_msg(const struct midi_message *msg)
 {
 	switch (msg->type) {
@@ -85,8 +101,11 @@ void print_msg(const struct midi_message *msg)
 	case MIDI_TYPE_SYSTEM_RESET:
 		printf("SYSTEM_RESET\n");
 		break;
+	case MIDI_TYPE_SYSEX:
+		print_sysex_msg(msg);
+		break;
 	default:
-		printf("UNKNOWN: %u\n", msg->type);
+		printf("UNKNOWN: 0x%02x\n", msg->type);
 		break;
 	}
 }
