@@ -17,7 +17,7 @@
 ##  along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-TARGETS := example-basic
+TARGETS := example-encode
 TARGETS += example-decode
 
 NANOMIDI_DIR = ..
@@ -41,7 +41,7 @@ all: $(TARGETS)
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-example-basic: $(OBJECTS) basic.o
+example-encode: $(OBJECTS) encode.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 example-decode: $(OBJECTS) decode.o
