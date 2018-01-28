@@ -39,6 +39,14 @@ enum midi_status {
 	MIDI_STATUS_SYSTEM_SONG_POSITION = 0xf2,
 	MIDI_STATUS_SYSTEM_SONG_SELECT = 0xf3,
 	MIDI_STATUS_SYSTEM_TUNE_REQUEST = 0xf6,
+
+	/* System Real Time Messages: */
+	MIDI_STATUS_SYSTEM_TIMING_CLOCK = 0xf8,
+	MIDI_STATUS_SYSTEM_START = 0xfa,
+	MIDI_STATUS_SYSTEM_CONTINUE = 0xfb,
+	MIDI_STATUS_SYSTEM_STOP = 0xfc,
+	MIDI_STATUS_SYSTEM_ACTIVE_SENSE = 0xfe,
+	MIDI_STATUS_SYSTEM_RESET = 0xff,
 };
 
 struct midi_message {
@@ -84,6 +92,8 @@ struct midi_message {
 
 struct midi_istream {
 	int (*read_cb)(void *param, char *data, size_t size);
+	struct midi_message msg;
+	struct midi_message rtmsg;
 	int bytes_left;
 	void *param;
 };
@@ -93,7 +103,7 @@ struct midi_ostream {
 	void *param;
 };
 
-bool midi_decode(struct midi_istream *stream, struct midi_message *msg);
+struct midi_message *midi_decode(struct midi_istream *stream);
 bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
 
 #endif /* NANOMIDI_H */

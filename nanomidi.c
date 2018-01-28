@@ -120,10 +120,30 @@ static bool decode_data(struct midi_message *msg, char c, int bytes_left)
 	return (bytes_left == 1);
 }
 
-bool midi_decode(struct midi_istream *stream, struct midi_message *msg)
+static bool is_realtime_message(int status)
+{
+	bool is_rt;
+
+	switch (status) {
+	case MIDI_STATUS_SYSTEM_TIMING_CLOCK:
+	case MIDI_STATUS_SYSTEM_START:
+	case MIDI_STATUS_SYSTEM_CONTINUE:
+	case MIDI_STATUS_SYSTEM_STOP:
+	case MIDI_STATUS_SYSTEM_ACTIVE_SENSE:
+	case MIDI_STATUS_SYSTEM_RESET:
+		is_rt = true;
+		break;
+	default:
+		is_rt = false;
+		break;
+	}
+
+	return is_rt;
+}
+
+struct midi_message *midi_decode(struct midi_istream *stream)
 {
 	assert(stream != NULL);
-	assert(msg != NULL);
 	assert(stream->read_cb != NULL);
 
 	char c;
@@ -131,25 +151,29 @@ bool midi_decode(struct midi_istream *stream, struct midi_message *msg)
 		bool is_status_byte = ((c & 0x80) != 0);
 		if (is_status_byte) {
 			int status = (c & 0xff);
-			if (status >= MIDI_STATUS_SYSTEM) {
-				msg->status = status;
-				msg->channel = 0;
+			if (is_realtime_message(status)) {
+				stream->rtmsg.status = status;
+				return &stream->rtmsg;
+			} else if (status >= MIDI_STATUS_SYSTEM) {
+				stream->msg.status = status;
+				stream->msg.channel = 0;
 			} else {
-				msg->status = (status & 0xf0);
-				msg->channel = (c & 0x0f);
+				stream->msg.status = (status & 0xf0);
+				stream->msg.channel = (c & 0x0f);
 			}
 
-			stream->bytes_left = data_size(msg);
-			if (stream->bytes_left == 0)
-				return true; /* Decoded message with no data */
+			stream->bytes_left = data_size(&stream->msg);
+			if (stream->bytes_left == 0) /* Message with no data */
+				return &stream->msg;
 		} else {
 			if (stream->bytes_left == 0) /* Running status */
-				stream->bytes_left = data_size(msg);
+				stream->bytes_left = data_size(&stream->msg);
 
 			if (stream->bytes_left > 0) {
-				if (decode_data(msg, c, stream->bytes_left)) {
+				if (decode_data(&stream->msg, c,
+						stream->bytes_left)) {
 					stream->bytes_left = 0;
-					return true;
+					return &stream->msg;
 				} else {
 					stream->bytes_left--;
 				}
@@ -157,7 +181,7 @@ bool midi_decode(struct midi_istream *stream, struct midi_message *msg)
 		}
 	}
 
-	return false;
+	return NULL;
 }
 
 bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
@@ -217,6 +241,12 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 		buffer[1] = DATA_BYTE(msg->data.system_song_select.song);
 		break;
 	case MIDI_STATUS_SYSTEM_TUNE_REQUEST:
+	case MIDI_STATUS_SYSTEM_TIMING_CLOCK:
+	case MIDI_STATUS_SYSTEM_START:
+	case MIDI_STATUS_SYSTEM_CONTINUE:
+	case MIDI_STATUS_SYSTEM_STOP:
+	case MIDI_STATUS_SYSTEM_ACTIVE_SENSE:
+	case MIDI_STATUS_SYSTEM_RESET:
 		length = 1;
 		break;
 	default:

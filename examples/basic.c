@@ -94,10 +94,10 @@ int main(void)
 
 	printf("\nDecoded messages:\n");
 	while (true) {
-		struct midi_message message;
-		if (!midi_decode(&istream, &message))
+		struct midi_message *message = midi_decode(&istream);
+		if (message == NULL)
 			break;
-		print_msg(&message);
+		print_msg(message);
 	}
 
 	return 0;

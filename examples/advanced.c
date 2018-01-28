@@ -24,10 +24,11 @@
 void print_msg(const struct midi_message *msg);
 
 static const uint8_t buffer[] = {
-	0x81, 48, 64,	/* NOTE_ON: ch=1, note=48, velocity=64 */
-	49, 64,		/* Running status: note=48, velocity=64 */
-	50, 64,		/* Running status: note=48, velocity=64 */
-	0x90, 48, 0,	/* NOTE_OFF: ch=0, note=48, velocity=0 */
+	0x81, 48, 64,		/* NOTE_ON: ch=1, note=48, velocity=64 */
+	49, 64,			/* Running status: note=48, velocity=64 */
+	50, 64,			/* Running status: note=48, velocity=64 */
+	0x90, 48, 0,		/* NOTE_OFF: ch=0, note=48, velocity=0 */
+	0x81, 48, 0xff, 64,	/* NOTE_ON, realtime message (RESET) injected */
 };
 
 static int read_buffer(void *param, char *data, size_t size)
@@ -51,10 +52,10 @@ int main(void)
 	printf("Decoded messages:\n");
 
 	while (true) {
-		struct midi_message message;
-		if (!midi_decode(&istream, &message))
+		struct midi_message *message = midi_decode(&istream);
+		if (message == NULL)
 			break;
-		print_msg(&message);
+		print_msg(message);
 	}
 
 	return 0;

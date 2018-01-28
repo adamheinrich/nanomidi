@@ -49,6 +49,24 @@ void print_msg(const struct midi_message *msg)
 	case MIDI_STATUS_SYSTEM_TUNE_REQUEST:
 		printf("SYSTEM_TUNE_REQUEST\n");
 		break;
+	case MIDI_STATUS_SYSTEM_TIMING_CLOCK:
+		printf("SYSTEM_TIMING_CLOCK\n");
+		break;
+	case MIDI_STATUS_SYSTEM_START:
+		printf("SYSTEM_START\n");
+		break;
+	case MIDI_STATUS_SYSTEM_CONTINUE:
+		printf("SYSTEM_CONTINUE\n");
+		break;
+	case MIDI_STATUS_SYSTEM_STOP:
+		printf("SYSTEM_STOP\n");
+		break;
+	case MIDI_STATUS_SYSTEM_ACTIVE_SENSE:
+		printf("SYSTEM_ACTIVE_SENSE\n");
+		break;
+	case MIDI_STATUS_SYSTEM_RESET:
+		printf("SYSTEM_RESET\n");
+		break;
 	default:
 		printf("UNKNOWN: %u\n", msg->status);
 		break;
