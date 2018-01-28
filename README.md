@@ -13,8 +13,8 @@ Implemented:
  - Data structures for **Channel Mode Messages** (Note On, Control Change, etc.)
  - Data structures for **System Common Messages**
  - Support for **System Real Time Messages** (single-byte messages which can
-   occur anywhere in the stream
- - Support for **System Exclusive Messages**
+   occur anywhere in the stream)
+ - Support for **System Exclusive Messages** (SysEx)
 
 ## License
 
