@@ -78,15 +78,15 @@ struct midi_message {
 		struct pitch_bend {
 			uint16_t value;
 		} pitch_bend;
-		struct system_time_code_quarter_frame {
+		struct time_code_quarter_frame {
 			uint8_t value;
-		} system_time_code_quarter_frame;
-		struct system_song_position {
+		} time_code_quarter_frame;
+		struct MIDI_TYPE_song_position {
 			uint16_t position;
-		} system_song_position;
-		struct system_song_select {
+		} song_position;
+		struct song_select {
 			uint8_t song;
-		} system_song_select;
+		} song_select;
 	} data;
 };
 

@@ -66,16 +66,16 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 		break;
 	case MIDI_TYPE_TIME_CODE_QUARTER_FRAME:
 		length = 2;
-		buffer[1] = DATA_BYTE(msg->data.system_time_code_quarter_frame.value);
+		buffer[1] = DATA_BYTE(msg->data.time_code_quarter_frame.value);
 		break;
 	case MIDI_TYPE_SONG_POSITION:
 		length = 3;
-		buffer[1] = DATA_BYTE(msg->data.system_song_position.position);
-		buffer[2] = DATA_BYTE(msg->data.system_song_position.position >> 7);
+		buffer[1] = DATA_BYTE(msg->data.song_position.position);
+		buffer[2] = DATA_BYTE(msg->data.song_position.position >> 7);
 		break;
 	case MIDI_TYPE_SONG_SELECT:
 		length = 2;
-		buffer[1] = DATA_BYTE(msg->data.system_song_select.song);
+		buffer[1] = DATA_BYTE(msg->data.song_select.song);
 		break;
 	case MIDI_TYPE_TUNE_REQUEST:
 	case MIDI_TYPE_TIMING_CLOCK:

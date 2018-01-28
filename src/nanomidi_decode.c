@@ -93,18 +93,18 @@ static bool decode_data(struct midi_message *msg, char c, int bytes_left)
 		}
 		break;
 	case MIDI_TYPE_TIME_CODE_QUARTER_FRAME:
-		msg->data.system_time_code_quarter_frame.value = DATA_BYTE(c);
+		msg->data.time_code_quarter_frame.value = DATA_BYTE(c);
 		break;
 	case MIDI_TYPE_SONG_POSITION:
 		if (bytes_left == 2) {
-			msg->data.system_song_position.position = DATA_BYTE(c);
+			msg->data.song_position.position = DATA_BYTE(c);
 		} else {
 			uint16_t msb = (DATA_BYTE(c) << 7);
-			msg->data.system_song_position.position |= msb;
+			msg->data.song_position.position |= msb;
 		}
 		break;
 	case MIDI_TYPE_SONG_SELECT:
-		msg->data.system_song_select.song = DATA_BYTE(c);
+		msg->data.song_select.song = DATA_BYTE(c);
 		break;
 	default:
 		return false;

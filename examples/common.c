@@ -36,15 +36,14 @@ void print_msg(const struct midi_message *msg)
 		break;
 	case MIDI_TYPE_TIME_CODE_QUARTER_FRAME:
 		printf("TIME_CODE_QUARTER_FRAME: value=%u\n",
-		       msg->data.system_time_code_quarter_frame.value);
+		       msg->data.time_code_quarter_frame.value);
 		break;
 	case MIDI_TYPE_SONG_POSITION:
 		printf("SONG_POSITION: position=%u\n",
-		       msg->data.system_song_position.position);
+		       msg->data.song_position.position);
 		break;
 	case MIDI_TYPE_SONG_SELECT:
-		printf("SONG_SELECT: song=%u\n",
-		       msg->data.system_song_select.song);
+		printf("SONG_SELECT: song=%u\n", msg->data.song_select.song);
 		break;
 	case MIDI_TYPE_TUNE_REQUEST:
 		printf("TUNE_REQUEST\n");

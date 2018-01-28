@@ -75,11 +75,11 @@ int main(void)
 
 		/* System Common Messages: */
 		{ .type = MIDI_TYPE_TIME_CODE_QUARTER_FRAME,
-		  .data.system_time_code_quarter_frame.value = 101 },
+		  .data.time_code_quarter_frame.value = 101 },
 		{ .type = MIDI_TYPE_SONG_POSITION,
-		  .data.system_song_position.position = 1917 },
+		  .data.song_position.position = 1917 },
 		{ .type = MIDI_TYPE_SONG_SELECT,
-		  .data.system_song_select.song = 92 },
+		  .data.song_select.song = 92 },
 		{ .type = MIDI_TYPE_TUNE_REQUEST },
 
 		/* System Real Time Messages: */
