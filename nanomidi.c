@@ -28,9 +28,9 @@ enum midi_status_system {
 	MIDI_STATUS_SYSTEM_EOX = 0xf7,
 };
 
-static size_t data_size(struct midi_message *msg)
+static int data_size(struct midi_message *msg)
 {
-	size_t length;
+	int length;
 
 	switch (msg->status) {
 	case MIDI_STATUS_NOTE_ON:
@@ -47,15 +47,18 @@ static size_t data_size(struct midi_message *msg)
 	case MIDI_STATUS_SYSTEM_SONG_SELECT:
 		length = 1;
 		break;
-	default:
+	case MIDI_STATUS_SYSTEM_TUNE_REQUEST:
 		length = 0;
+		break;
+	default:
+		length = -1;
 		break;
 	}
 
 	return length;
 }
 
-static bool decode_data(struct midi_message *msg, char c, size_t bytes_left)
+static bool decode_data(struct midi_message *msg, char c, int bytes_left)
 {
 	switch (msg->status) {
 	case MIDI_STATUS_NOTE_ON:
@@ -135,7 +138,10 @@ bool midi_decode(struct midi_istream *stream, struct midi_message *msg)
 				msg->status = (status & 0xf0);
 				msg->channel = (c & 0x0f);
 			}
+
 			stream->bytes_left = data_size(msg);
+			if (stream->bytes_left == 0)
+				return true; /* Decoded message with no data */
 		} else {
 			if (stream->bytes_left == 0) /* Running status */
 				stream->bytes_left = data_size(msg);
@@ -209,6 +215,9 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 	case MIDI_STATUS_SYSTEM_SONG_SELECT:
 		length = 2;
 		buffer[1] = DATA_BYTE(msg->data.system_song_select.song);
+		break;
+	case MIDI_STATUS_SYSTEM_TUNE_REQUEST:
+		length = 1;
 		break;
 	default:
 		length = 0;

@@ -80,6 +80,7 @@ int main(void)
 		  .data.system_song_position.position = 1917 },
 		{ .status = MIDI_STATUS_SYSTEM_SONG_SELECT,
 		  .data.system_song_select.song = 92 },
+		{ .status = MIDI_STATUS_SYSTEM_TUNE_REQUEST },
 	};
 
 	struct midi_istream istream = { .read_cb = &read_buffer };

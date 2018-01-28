@@ -46,6 +46,9 @@ void print_msg(const struct midi_message *msg)
 		printf("SYSTEM_SONG_SELECT: song=%u\n",
 		       msg->data.system_song_select.song);
 		break;
+	case MIDI_STATUS_SYSTEM_TUNE_REQUEST:
+		printf("SYSTEM_TUNE_REQUEST\n");
+		break;
 	default:
 		printf("UNKNOWN: %u\n", msg->status);
 		break;

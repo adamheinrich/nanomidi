@@ -38,6 +38,7 @@ enum midi_status {
 	MIDI_STATUS_SYSTEM_TIME_CODE_QUARTER_FRAME = 0xf1,
 	MIDI_STATUS_SYSTEM_SONG_POSITION = 0xf2,
 	MIDI_STATUS_SYSTEM_SONG_SELECT = 0xf3,
+	MIDI_STATUS_SYSTEM_TUNE_REQUEST = 0xf6,
 };
 
 struct midi_message {
@@ -83,7 +84,7 @@ struct midi_message {
 
 struct midi_istream {
 	int (*read_cb)(void *param, char *data, size_t size);
-	size_t bytes_left;
+	int bytes_left;
 	void *param;
 };
 
