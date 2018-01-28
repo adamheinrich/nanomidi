@@ -21,6 +21,8 @@
 #include <nanomidi.h>
 #include "common.h"
 
+#define SYSEX_SUPPORTED		1
+
 static char buffer[1024];
 static size_t buffer_wr; /* Write index */
 static size_t buffer_rd; /* Read index */
@@ -88,9 +90,25 @@ int main(void)
 		{ .type = MIDI_TYPE_STOP },
 		{ .type = MIDI_TYPE_ACTIVE_SENSE },
 		{ .type = MIDI_TYPE_SYSTEM_RESET },
+
+		/* System Exclusive Messages (SysEx): */
+		{ .type = MIDI_TYPE_SYSEX,
+		  .data.sysex.data = "\xa\xc\xa\xb", .data.sysex.length = 4 },
+		{ .type = MIDI_TYPE_SYSEX,
+		  .data.sysex.data = "\x19\x17", .data.sysex.length = 2 },
 	};
 
+#if SYSEX_SUPPORTED
+	/* A buffer must be allocated to make SysEx decoding work: */
+	char sysex_buffer[32];
+	struct midi_istream istream = {
+		.read_cb = &read_buffer,
+		.sysex_buffer.data = sysex_buffer,
+		.sysex_buffer.size = sizeof(sysex_buffer),
+	};
+#else
 	struct midi_istream istream = { .read_cb = &read_buffer };
+#endif
 	struct midi_ostream ostream = { .write_cb = &write_buffer };
 
 	printf("Encoded messages:\n");
