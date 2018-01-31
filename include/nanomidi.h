@@ -85,7 +85,7 @@ struct midi_message {
 		struct time_code_quarter_frame {
 			uint8_t value;
 		} time_code_quarter_frame;
-		struct MIDI_TYPE_song_position {
+		struct song_position {
 			uint16_t position;
 		} song_position;
 		struct song_select {
