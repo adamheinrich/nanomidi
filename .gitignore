@@ -1,3 +1,4 @@
 *.o
 examples/example-*
+doc/html
 *.sublime-*

@@ -17,9 +17,16 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/** @defgroup decoder MIDI Decoder
+ *
+ * @brief MIDI message decoder
+ */
+
 #include <nanomidi.h>
 #include <assert.h>
 #include "nanomidi_internal.h"
+
+/**@{*/
 
 static int data_size(struct midi_message *msg)
 {
@@ -134,6 +141,16 @@ static bool is_realtime_message(int type)
 	return is_rt;
 }
 
+/** @brief Decode a single MIDI message
+ *
+ * If a message is decoded, it has to be processed (e.g. copied) immediately
+ * as it will become invalid with the next call to @ref midi_decode.
+ *
+ * @param stream Pointer to the @ref midi_istream structure
+ *
+ * @return Pointer to a decoded message (allocated in @ref midi_istream) or
+ * `NULL` if the message has not been decoded yet.
+ */
 struct midi_message *midi_decode(struct midi_istream *stream)
 {
 	assert(stream != NULL);
@@ -207,3 +224,5 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 
 	return NULL;
 }
+
+/**@}*/

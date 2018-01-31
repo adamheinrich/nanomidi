@@ -17,10 +17,26 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/** @defgroup encoder MIDI Encoder
+ *
+ * @brief MIDI message encoder
+ */
+
 #include <nanomidi.h>
 #include <assert.h>
 #include "nanomidi_internal.h"
 
+/**@{*/
+
+/** @brief Encode a single MIDI message
+ *
+ * @param stream Pointer to the @ref midi_ostream structure
+ * @param[in] msg Pointer to the @ref midi_message structure to be encoded
+ *
+ * @return `true` if the message has been encoded, `false` otherwise
+ * (either the message type is unknown or the output stream fails to write
+ * encoded data).
+ */
 bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 {
 	assert(stream != NULL);
@@ -119,3 +135,5 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 
 	return false;
 }
+
+/**@}*/

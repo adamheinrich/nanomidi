@@ -1,0 +1,16 @@
+/** @mainpage Nanomidi API Documentation
+ *
+ * @author Adam Heinrich, <adam@adamh.cz>
+ *
+ * Nanomidi is a simple stream-based MIDI message encoder and decoder written
+ * in C. It is suitable for embedded (microcontroller) applications.
+ *
+ * Nanomidi is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option)
+ * any later version.
+ *
+ * See the
+ * <a href="https://github.com/adamheinrich/nanomidi">nanomidi repository</a>
+ * for more information and example code.
+ */
