@@ -157,7 +157,7 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 	assert(stream->read_cb != NULL);
 
 	char c;
-	while (stream->read_cb(stream->param, &c, 1) == 1) {
+	while (stream->read_cb(stream, &c, 1) == 1) {
 		bool is_type_byte = ((c & 0x80) != 0);
 		if (is_type_byte) {
 			int type = (c & 0xff);

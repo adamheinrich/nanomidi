@@ -34,18 +34,18 @@ static const uint8_t buffer[] = {
 	0xf1, 0xfa, 0x42, 0xf7,	/* SysEx, realtime message (START) injected */
 };
 
-static int read_buffer(void *param, char *data, size_t size)
+static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
 {
-	(void)param;
+	(void)stream;
 	static size_t buffer_rd;
 
 	for (size_t i = 0; i < size; i++) {
 		data[i] = (char)buffer[buffer_rd];
 		if (buffer_rd++ > sizeof(buffer))
-			return (int)i;
+			return i;
 	}
 
-	return (int)size;
+	return size;
 }
 
 int main(void)

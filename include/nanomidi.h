@@ -44,13 +44,14 @@ struct midi_istream {
 	 *
 	 * The callback should read the exact number of bytes requested.
 	 *
-	 * @param param Optional parameter provided to the callback (or `NULL`)
+	 * @param stream Pointer to @ref midi_istream associated with the
+	 * callback.
 	 * @param[out] data Data read
 	 * @param size Number of bytes to be read
 	 *
 	 * @returns The number of bytes actually read
 	 */
-	int (*read_cb)(void *param, char *data, size_t size);
+	size_t (*read_cb)(struct midi_istream *stream, char *data, size_t size);
 	/** @brief Message data structure filled by the decoder.
 	 *
 	 * Once a message is decoded, @ref midi_decode returns a pointer
@@ -78,13 +79,15 @@ struct midi_ostream {
 	 *
 	 * The callback should write the exact number of bytes requested.
 	 *
-	 * @param param Optional parameter provided to the callback (or `NULL`)
+	 * @param stream Pointer to @ref midi_ostream associated with the
+	 * callback.
 	 * @param[in] data Data to be written
 	 * @param size Number of bytes to be written
 	 *
 	 * @returns The number of bytes actually written
 	 */
-	int (*write_cb)(void *param, const char *data, size_t size);
+	size_t (*write_cb)(struct midi_ostream *stream, const char *data,
+			   size_t size);
 	/** @brief Optional parameter to be passed to @ref write_cb */
 	void *param;
 };

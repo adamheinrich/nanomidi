@@ -27,30 +27,31 @@ static char buffer[1024];
 static size_t buffer_wr; /* Write index */
 static size_t buffer_rd; /* Read index */
 
-static int read_buffer(void *param, char *data, size_t size)
+static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
 {
-	(void)param;
+	(void)stream;
 
 	for (size_t i = 0; i < size; i++) {
 		data[i] = buffer[buffer_rd];
 		if (buffer_rd++ >= buffer_wr)
-			return (int)i;
+			return i;
 	}
 
-	return (int)size;
+	return size;
 }
 
-static int write_buffer(void *param, const char *data, size_t size)
+static size_t write_buffer(struct midi_ostream *stream, const char *data,
+			   size_t size)
 {
-	(void)param;
+	(void)stream;
 
 	for (size_t i = 0; i < size; i++) {
 		buffer[buffer_wr] = data[i];
 		if (buffer_wr++ >= sizeof(buffer))
-			return (int)i;
+			return i;
 	}
 
-	return (int)size;
+	return size;
 }
 
 int main(void)
