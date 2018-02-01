@@ -46,6 +46,9 @@ struct midi_sysex_buffer {
  * the user. If SysEx decoding is required, it is necessary to provide a buffer
  * in @ref sysex_buffer.
  *
+ * Alternatively, it is possible to use @ref midi_istream_from_buffer to create
+ * a stream which reads from a buffer.
+ *
  * @ingroup decoder
  */
 struct midi_istream {
@@ -122,6 +125,8 @@ struct midi_ostream {
 	void *param;
 };
 
+void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
+			      size_t size);
 void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
 			      size_t size);
 

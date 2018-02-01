@@ -21,6 +21,17 @@
 #include <assert.h>
 #include <string.h>
 
+static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
+{
+	char *src = (char *)stream->param;
+	stream->param = src+size;
+
+	for (size_t i = 0; i < size; i++)
+		data[i] = src[i];
+
+	return size;
+}
+
 static size_t write_buffer(struct midi_ostream *stream, const char *data,
 			   size_t size)
 {
@@ -31,6 +42,30 @@ static size_t write_buffer(struct midi_ostream *stream, const char *data,
 		dst[i] = data[i];
 
 	return size;
+}
+
+/** @brief Create an input stream which reads from a buffer
+ *
+ * @ingroup decoder
+ *
+ * The input stream can be used to read a finite number of bytes from
+ * a pre-allocated buffer. It can be also used to decode a single message if
+ * the function is called right before @ref midi_decode.
+ *
+ * @param stream Pointer to the @ref midi_istream structure to be initialized
+ * @param buffer Pointer to the buffer to be read from
+ * @param size Buffer size (in bytes)
+ */
+void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
+			      size_t size)
+{
+	assert(stream != NULL);
+	assert(buffer != NULL);
+
+	memset(stream, 0, sizeof(struct midi_istream));
+	stream->read_cb = &read_buffer;
+	stream->capacity = size;
+	stream->param = buffer;
 }
 
 /** @brief Create an output stream which writes to a buffer

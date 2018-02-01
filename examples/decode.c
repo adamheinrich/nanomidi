@@ -34,36 +34,16 @@ static const uint8_t buffer[] = {
 	0xf1, 0xfa, 0x42, 0xf7,	/* SysEx, realtime message (START) injected */
 };
 
-static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
-{
-	(void)stream;
-	static size_t buffer_rd;
-
-	for (size_t i = 0; i < size; i++) {
-		data[i] = (char)buffer[buffer_rd];
-		if (buffer_rd++ > sizeof(buffer))
-			return i;
-	}
-
-	return size;
-}
-
 int main(void)
 {
+	struct midi_istream istream;
+	midi_istream_from_buffer(&istream, (char *)buffer, sizeof(buffer));
+
 #if SYSEX_SUPPORTED
 	/* A buffer must be allocated to make SysEx decoding work: */
 	char sysex_buffer[32];
-	struct midi_istream istream = {
-		.read_cb = &read_buffer,
-		.capacity = MIDI_STREAM_CAPACITY_UNLIMITED,
-		.sysex_buffer.data = sysex_buffer,
-		.sysex_buffer.size = sizeof(sysex_buffer),
-	};
-#else
-	struct midi_istream istream = {
-		.read_cb = &read_buffer,
-		.capacity = MIDI_STREAM_CAPACITY_UNLIMITED,
-	};
+	istream.sysex_buffer.data = sysex_buffer;
+	istream.sysex_buffer.size = sizeof(sysex_buffer);
 #endif
 
 	printf("Decoded messages:\n");
