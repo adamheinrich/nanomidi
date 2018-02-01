@@ -142,6 +142,18 @@ static bool is_realtime_message(int type)
 	return is_rt;
 }
 
+static bool read_byte(struct midi_istream *stream, char *c)
+{
+	if (stream->capacity == 0)
+		return false;
+
+	if (stream->capacity != MIDI_STREAM_CAPACITY_UNLIMITED) {
+		stream->capacity--;
+	}
+
+	return (stream->read_cb(stream, c, 1) == 1);
+}
+
 /** @brief Decode a single MIDI message
  *
  * If a message is decoded, it has to be processed (e.g. copied) immediately
@@ -158,7 +170,7 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 	assert(stream->read_cb != NULL);
 
 	char c;
-	while (stream->read_cb(stream, &c, 1) == 1) {
+	while (read_byte(stream, &c)) {
 		bool is_type_byte = ((c & 0x80) != 0);
 		if (is_type_byte) {
 			int type = (c & 0xff);

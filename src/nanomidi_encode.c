@@ -31,7 +31,7 @@
 
 static bool prepare_write(struct midi_ostream *stream, size_t length)
 {
-	if (stream->capacity == MIDI_OSTREAM_CAPACITY_UNLIMITED) {
+	if (stream->capacity == MIDI_STREAM_CAPACITY_UNLIMITED) {
 		return true;
 	} else if (stream->capacity >= length) {
 		stream->capacity -= length;

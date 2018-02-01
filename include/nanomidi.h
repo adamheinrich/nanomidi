@@ -22,9 +22,8 @@
 
 #include <nanomidi_messages.h>
 
-/** @brief Unlimited capacity of @ref midi_ostream
- * @ingroup decoder */
-#define MIDI_OSTREAM_CAPACITY_UNLIMITED		SIZE_MAX
+/** @brief Unlimited capacity of @ref midi_istream or @ref midi_ostream */
+#define MIDI_STREAM_CAPACITY_UNLIMITED		(SIZE_MAX)
 
 /** @brief Buffer for SysEx messages decoding
  * @ingroup decoder
@@ -40,7 +39,13 @@ struct midi_sysex_buffer {
 	size_t size;
 };
 
-/** @brief Input stream
+
+/** @brief Input stream for @ref midi_decode
+ *
+ * Read callback @ref red_cb and stream @ref capacity must be provided by
+ * the user. If SysEx decoding is required, it is necessary to provide a buffer
+ * in @ref sysex_buffer.
+ *
  * @ingroup decoder
  */
 struct midi_istream {
@@ -56,6 +61,13 @@ struct midi_istream {
 	 * @returns The number of bytes actually read
 	 */
 	size_t (*read_cb)(struct midi_istream *stream, char *data, size_t size);
+	/** @brief Stream capacity (@ref MIDI_STREAM_CAPACITY_UNLIMITED for
+	 * unlimited capacity)
+	 *
+	 * Functon @ref midi_decode will not write more than `capacity` bytes
+	 * to the stream if `capacity` is not set to
+	 * @ref MIDI_STREAM_CAPACITY_UNLIMITED. */
+	size_t capacity;
 	/** @brief Message data structure filled by the decoder.
 	 *
 	 * Once a message is decoded, @ref midi_decode returns a pointer
@@ -99,12 +111,12 @@ struct midi_ostream {
 	 */
 	size_t (*write_cb)(struct midi_ostream *stream, const char *data,
 			   size_t size);
-	/** @brief Stream capacity (@ref MIDI_OSTREAM_CAPACITY_UNLIMITED for
+	/** @brief Stream capacity (@ref MIDI_STREAM_CAPACITY_UNLIMITED for
 	 * unlimited capacity)
 	 *
 	 * Functon @ref midi_encode will not write more than `capacity` bytes
 	 * to the stream if `capacity` is not set to
-	 * @ref MIDI_OSTREAM_CAPACITY_UNLIMITED. */
+	 * @ref MIDI_STREAM_CAPACITY_UNLIMITED. */
 	size_t capacity;
 	/** @brief Optional parameter to be passed to @ref write_cb */
 	void *param;

@@ -104,15 +104,19 @@ int main(void)
 	char sysex_buffer[32];
 	struct midi_istream istream = {
 		.read_cb = &read_buffer,
+		.capacity = MIDI_STREAM_CAPACITY_UNLIMITED,
 		.sysex_buffer.data = sysex_buffer,
 		.sysex_buffer.size = sizeof(sysex_buffer),
 	};
 #else
-	struct midi_istream istream = { .read_cb = &read_buffer };
+	struct midi_istream istream = {
+		.read_cb = &read_buffer,
+		.capacity = MIDI_STREAM_CAPACITY_UNLIMITED,
+	};
 #endif
 	struct midi_ostream ostream = {
 		.write_cb = &write_buffer,
-		.capacity = MIDI_OSTREAM_CAPACITY_UNLIMITED,
+		.capacity = MIDI_STREAM_CAPACITY_UNLIMITED,
 	};
 
 	printf("Encoded messages:\n");
