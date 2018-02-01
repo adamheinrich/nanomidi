@@ -20,17 +20,17 @@
 #include "common.h"
 #include <stdio.h>
 
-void print_sysex_msg(const struct midi_message *msg)
+void print_buffer(const char *data, size_t length)
 {
-	printf("SysEx: { ");
-	if (msg->data.sysex.data == NULL) {
+	printf("{ ");
+	if (data == NULL) {
 		printf("NULL");
 	} else {
-		for (size_t i = 0; i < msg->data.sysex.length; i++) {
-			if (i < msg->data.sysex.length-1)
-				printf("0x%02x, ", msg->data.sysex.data[i]);
+		for (size_t i = 0; i < length; i++) {
+			if (i < length-1)
+				printf("0x%02hhx, ", data[i]);
 			else
-				printf("0x%02x", msg->data.sysex.data[i]);
+				printf("0x%02hhx", data[i]);
 		}
 	}
 	printf(" }\n");
@@ -102,10 +102,11 @@ void print_msg(const struct midi_message *msg)
 		printf("SYSTEM_RESET\n");
 		break;
 	case MIDI_TYPE_SYSEX:
-		print_sysex_msg(msg);
+		printf("SysEx: ");
+		print_buffer(msg->data.sysex.data, msg->data.sysex.length);
 		break;
 	default:
-		printf("UNKNOWN: 0x%02x\n", msg->type);
+		printf("UNKNOWN: 0x%02hhx\n", msg->type);
 		break;
 	}
 }

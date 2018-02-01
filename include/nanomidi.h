@@ -80,6 +80,9 @@ struct midi_istream {
  * Write callback @ref write_cb and stream @ref capacity must be provided by
  * the user.
  *
+ * Alternatively, it is possible to use @ref midi_ostream_from_buffer to create
+ * a stream which writes to a buffer.
+ *
  * @ingroup encoder
  */
 struct midi_ostream {
@@ -106,6 +109,9 @@ struct midi_ostream {
 	/** @brief Optional parameter to be passed to @ref write_cb */
 	void *param;
 };
+
+void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
+			      size_t size);
 
 struct midi_message *midi_decode(struct midi_istream *stream);
 size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);

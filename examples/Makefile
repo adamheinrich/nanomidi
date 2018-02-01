@@ -19,6 +19,7 @@
 
 TARGETS := example-encode
 TARGETS += example-decode
+TARGETS += example-buffer
 
 NANOMIDI_DIR = ..
 
@@ -45,6 +46,9 @@ example-encode: $(OBJECTS) encode.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 example-decode: $(OBJECTS) decode.o
+	$(CC) $^ $(LDFLAGS) -o $@
+
+example-buffer: $(OBJECTS) buffer.o
 	$(CC) $^ $(LDFLAGS) -o $@
 
 .PHONY: clean

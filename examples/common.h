@@ -22,6 +22,7 @@
 
 #include <nanomidi.h>
 
+void print_buffer(const char *buffer, size_t length);
 void print_msg(const struct midi_message *msg);
 
 #endif /* COMMON_H */
