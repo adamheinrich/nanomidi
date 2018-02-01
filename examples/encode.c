@@ -124,7 +124,7 @@ int main(void)
 	/* All messages are now encoded in the buffer. */
 
 	printf("\nDecoded messages:\n");
-	while (true) {
+	while (1) {
 		struct midi_message *message = midi_decode(&istream);
 		if (message == NULL)
 			break;
