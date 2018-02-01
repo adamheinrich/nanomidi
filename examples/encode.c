@@ -110,7 +110,10 @@ int main(void)
 #else
 	struct midi_istream istream = { .read_cb = &read_buffer };
 #endif
-	struct midi_ostream ostream = { .write_cb = &write_buffer };
+	struct midi_ostream ostream = {
+		.write_cb = &write_buffer,
+		.capacity = MIDI_OSTREAM_CAPACITY_UNLIMITED,
+	};
 
 	printf("Encoded messages:\n");
 	for (size_t i = 0; i < sizeof(messages)/sizeof(*messages); i++) {

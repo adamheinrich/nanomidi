@@ -28,6 +28,18 @@
 
 /**@{*/
 
+static bool prepare_write(struct midi_ostream *stream, size_t length)
+{
+	if (stream->capacity == MIDI_OSTREAM_CAPACITY_UNLIMITED) {
+		return true;
+	} else if (stream->capacity >= length) {
+		stream->capacity -= length;
+		return true;
+	}
+
+	return false;
+}
+
 /** @brief Encode a single MIDI message
  *
  * @param stream Pointer to the @ref midi_ostream structure
@@ -37,7 +49,7 @@
  * (either the message type is unknown or the output stream fails to write
  * encoded data).
  */
-bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
+size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 {
 	assert(stream != NULL);
 	assert(msg != NULL);
@@ -115,22 +127,32 @@ bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 			buffer[0] = (char)(buffer[0] | (msg->channel & 0x0f));
 		}
 
-		size_t n = stream->write_cb(stream, buffer, length);
-		return (n == length);
+		if (!prepare_write(stream, length))
+			return false;
+
+		return stream->write_cb(stream, buffer, length);
 	} else if (msg->type == MIDI_TYPE_SYSEX) {
 		buffer[0] = (char)MIDI_TYPE_SOX;
 		buffer[1] = (char)MIDI_TYPE_EOX;
 
+		if (msg->data.sysex.data == NULL)
+			length = 2;
+		else
+			length = msg->data.sysex.length + 2;
+
+		if (!prepare_write(stream, length))
+			return false;
+
 		size_t n = stream->write_cb(stream, buffer, 1);
-
-		const char *data = msg->data.sysex.data;
-		if (data != NULL) {
-			length = msg->data.sysex.length;
-			n += stream->write_cb(stream, data, length);
+		if (msg->data.sysex.data != NULL) {
+			for (size_t i = 0; i < msg->data.sysex.length; i++) {
+				char c = DATA_BYTE(msg->data.sysex.data[i]);
+				n += stream->write_cb(stream, &c, 1);
+			}
 		}
-
 		n += stream->write_cb(stream, &buffer[1], 1);
-		return (n == length+2);
+
+		return n;
 	}
 
 	return false;

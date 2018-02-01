@@ -22,6 +22,10 @@
 
 #include <nanomidi_messages.h>
 
+/** @brief Unlimited capacity of @ref midi_ostream
+ * @ingroup decoder */
+#define MIDI_OSTREAM_CAPACITY_UNLIMITED		SIZE_MAX
+
 /** @brief Buffer for SysEx messages decoding
  * @ingroup decoder
  */
@@ -71,7 +75,11 @@ struct midi_istream {
 	void *param;
 };
 
-/** @brief Output stream
+/** @brief Output stream for @ref midi_encode
+ *
+ * Write callback @ref write_cb and stream @ref capacity must be provided by
+ * the user.
+ *
  * @ingroup encoder
  */
 struct midi_ostream {
@@ -88,11 +96,18 @@ struct midi_ostream {
 	 */
 	size_t (*write_cb)(struct midi_ostream *stream, const char *data,
 			   size_t size);
+	/** @brief Stream capacity (@ref MIDI_OSTREAM_CAPACITY_UNLIMITED for
+	 * unlimited capacity)
+	 *
+	 * Functon @ref midi_encode will not write more than `capacity` bytes
+	 * to the stream if `capacity` is not set to
+	 * @ref MIDI_OSTREAM_CAPACITY_UNLIMITED. */
+	size_t capacity;
 	/** @brief Optional parameter to be passed to @ref write_cb */
 	void *param;
 };
 
 struct midi_message *midi_decode(struct midi_istream *stream);
-bool midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
+size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
 
 #endif /* NANOMIDI_H */
