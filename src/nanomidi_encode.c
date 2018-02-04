@@ -22,7 +22,7 @@
  * @brief MIDI message encoder
  */
 
-#include <nanomidi.h>
+#include <nanomidi/nanomidi.h>
 #include <assert.h>
 #include <stdbool.h>
 #include "nanomidi_internal.h"

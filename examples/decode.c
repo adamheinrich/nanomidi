@@ -19,7 +19,7 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <nanomidi.h>
+#include <nanomidi/nanomidi.h>
 #include "common.h"
 
 #define SYSEX_SUPPORTED		1

@@ -20,7 +20,7 @@
 #ifndef NANOMIDI_H
 #define NANOMIDI_H
 
-#include <nanomidi_messages.h>
+#include <nanomidi/messages.h>
 
 #ifdef __cplusplus
 extern "C" {

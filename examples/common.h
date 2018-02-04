@@ -20,7 +20,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include <nanomidi.h>
+#include <nanomidi/messages.h>
 
 void print_buffer(const char *buffer, size_t length);
 void print_msg(const struct midi_message *msg);
