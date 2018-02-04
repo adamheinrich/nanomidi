@@ -19,7 +19,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <nanomidi/nanomidi.h>
+#include <nanomidi/encoder.h>
+#include <nanomidi/decoder.h>
 #include "common.h"
 
 #define SYSEX_SUPPORTED		1

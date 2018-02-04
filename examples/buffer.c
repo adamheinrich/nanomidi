@@ -18,7 +18,7 @@
  */
 
 #include <stdio.h>
-#include <nanomidi/nanomidi.h>
+#include <nanomidi/encoder.h>
 #include "common.h"
 
 #define LONG_STR "More than 6 bytes"

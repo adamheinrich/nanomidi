@@ -17,17 +17,15 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NANOMIDI_H
-#define NANOMIDI_H
+#ifndef NANOMIDI_DECODER_H
+#define NANOMIDI_DECODER_H
 
+#include <nanomidi/common.h>
 #include <nanomidi/messages.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** @brief Unlimited capacity of @ref midi_istream or @ref midi_ostream */
-#define MIDI_STREAM_CAPACITY_UNLIMITED		(SIZE_MAX)
 
 /** @brief Buffer for SysEx messages decoding
  * @ingroup decoder
@@ -94,51 +92,12 @@ struct midi_istream {
 	void *param;
 };
 
-/** @brief Output stream for @ref midi_encode
- *
- * Write callback @ref write_cb and stream @ref capacity must be provided by
- * the user.
- *
- * Alternatively, it is possible to use @ref midi_ostream_from_buffer to create
- * a stream which writes to a buffer.
- *
- * @ingroup encoder
- */
-struct midi_ostream {
-	/** @brief Pointer to a user-implemented write callback
-	 *
-	 * The callback should write the exact number of bytes requested.
-	 *
-	 * @param stream Pointer to @ref midi_ostream associated with the
-	 * callback.
-	 * @param[in] data Data to be written
-	 * @param size Number of bytes to be written
-	 *
-	 * @returns The number of bytes actually written
-	 */
-	size_t (*write_cb)(struct midi_ostream *stream, const char *data,
-			   size_t size);
-	/** @brief Stream capacity (@ref MIDI_STREAM_CAPACITY_UNLIMITED for
-	 * unlimited capacity)
-	 *
-	 * Functon @ref midi_encode will not write more than `capacity` bytes
-	 * to the stream if `capacity` is not set to
-	 * @ref MIDI_STREAM_CAPACITY_UNLIMITED. */
-	size_t capacity;
-	/** @brief Optional parameter to be passed to @ref write_cb */
-	void *param;
-};
-
 void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
 			      size_t size);
-void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
-			      size_t size);
-
 struct midi_message *midi_decode(struct midi_istream *stream);
-size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NANOMIDI_H */
+#endif /* NANOMIDI_DECODER_H */

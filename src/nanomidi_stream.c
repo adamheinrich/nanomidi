@@ -17,7 +17,8 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <nanomidi/nanomidi.h>
+#include <nanomidi/decoder.h>
+#include <nanomidi/encoder.h>
 #include <assert.h>
 #include <string.h>
 
