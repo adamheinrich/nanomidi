@@ -22,6 +22,10 @@
 
 #include <nanomidi_messages.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @brief Unlimited capacity of @ref midi_istream or @ref midi_ostream */
 #define MIDI_STREAM_CAPACITY_UNLIMITED		(SIZE_MAX)
 
@@ -132,5 +136,9 @@ void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
 
 struct midi_message *midi_decode(struct midi_istream *stream);
 size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NANOMIDI_H */

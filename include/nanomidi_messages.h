@@ -23,6 +23,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /** @defgroup messages MIDI Messages
  *
  * @brief MIDI message definitions and data structures
@@ -157,5 +161,9 @@ struct midi_message {
 };
 
 /**@}*/
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NANOMIDI_MESSAGES_H */
