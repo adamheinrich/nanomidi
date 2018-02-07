@@ -11,10 +11,10 @@ examples in the `examples` directory.
 Implemented:
 
  - [Message encoder][2] `midi_encode()`
- - [Message decoder][3] `midi_decode()` with support for **Running Status** (omitted
-   status byte in successive messages of the same type)
- - [Data structures][4] for **Channel Mode Messages** (Note On, Control Change, etc.)
- - Data structures for **System Common Messages**
+ - [Message decoder][3] `midi_decode()` with support for **Running Status**
+   (omitted status byte in successive messages of the same type)
+ - [Data structures][4] for **Channel Mode Messages** (Note On, Control Change,
+   etc.) and **System Common Messages**
  - Support for **System Real Time Messages** (single-byte messages which can
    occur anywhere in the stream)
  - Support for **System Exclusive Messages** (SysEx)
