@@ -31,4 +31,4 @@ See file `COPYING` for details.
 [1]: https://doc.adamh.cz/nanomidi
 [2]: https://doc.adamh.cz/nanomidi/group__encoder.html
 [3]: https://doc.adamh.cz/nanomidi/group__decoder.html
-[4]: https://doc.adamh.cz/nanomidi/group__messages.html
+[4]: https://doc.adamh.cz/nanomidi/structmidi__message.html
