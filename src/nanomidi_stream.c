@@ -45,17 +45,18 @@ static size_t write_buffer(struct midi_ostream *stream, const char *data,
 	return size;
 }
 
-/** @brief Create an input stream which reads from a buffer
+/**
+ * Creates an input stream which reads from a buffer.
  *
  * @ingroup decoder
  *
  * The input stream can be used to read a finite number of bytes from
  * a pre-allocated buffer. It can be also used to decode a single message if
- * the function is called right before @ref midi_decode.
+ * the function is called right before midi_decode().
  *
- * @param stream Pointer to the @ref midi_istream structure to be initialized
- * @param buffer Pointer to the buffer to be read from
- * @param size Buffer size (in bytes)
+ * @param stream        Pointer to the #midi_istream structure to be initialized
+ * @param buffer        Pointer to the buffer to be read from
+ * @param size          Buffer size (in bytes)
  */
 void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
 			      size_t size)
@@ -69,17 +70,18 @@ void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
 	stream->param = buffer;
 }
 
-/** @brief Create an output stream which writes to a buffer
+/**
+ * Creates an output stream which writes to a buffer.
  *
  * @ingroup encoder
  *
  * The output stream can be used to write a finite number of messages into
  * a pre-allocated buffer. It can be also used to encode a single message if
- * the function is called right before @ref midi_encode.
+ * the function is called right before midi_encode().
  *
- * @param stream Pointer to the @ref midi_ostream structure to be initialized
- * @param buffer Pointer to the buffer to be written to
- * @param size Buffer size (in bytes)
+ * @param stream        Pointer to the #midi_ostream structure to be initialized
+ * @param buffer        Pointer to the buffer to be written to
+ * @param size          Buffer size (in bytes)
  */
 void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
 			      size_t size)

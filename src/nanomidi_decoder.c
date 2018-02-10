@@ -17,9 +17,9 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @defgroup decoder MIDI Decoder
- *
- * @brief MIDI message decoder
+/**
+ * MIDI message decoder
+ * @defgroup decoder MIDI Decoder
  */
 
 #include <nanomidi/decoder.h>
@@ -154,15 +154,16 @@ static bool read_byte(struct midi_istream *stream, char *c)
 	return (stream->read_cb(stream, c, 1) == 1);
 }
 
-/** @brief Decode a single MIDI message
+/**
+ * Decodes a single MIDI message.
  *
  * If a message is decoded, it has to be processed (e.g. copied) immediately
- * as it will become invalid with the next call to @ref midi_decode.
+ * as it will become invalid with the next call to midi_decode().
  *
- * @param stream Pointer to the @ref midi_istream structure
+ * @param stream Pointer to the #midi_istream structure
  *
- * @return Pointer to a decoded message (allocated in @ref midi_istream) or
- * `NULL` if the message has not been decoded yet.
+ * @return Pointer to a decoded message (allocated in #midi_istream) or `NULL`
+ * if the message has not been decoded yet.
  */
 struct midi_message *midi_decode(struct midi_istream *stream)
 {

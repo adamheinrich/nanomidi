@@ -27,44 +27,44 @@
 extern "C" {
 #endif
 
-/** @brief Output stream for @ref midi_encode
+/** @addtogroup encoder
+ @{ */
+
+/**
+ * Output stream for midi_encode()
  *
- * Write callback @ref write_cb and stream @ref capacity must be provided by
- * the user.
- *
- * Alternatively, it is possible to use @ref midi_ostream_from_buffer to create
- * a stream which writes to a buffer.
- *
- * @ingroup encoder
+ * Write callback write_cb() and stream capacity must be provided by the user.
+ * It is also possible to call midi_ostream_from_buffer() to create a stream
+ * which writes to a buffer.
  */
 struct midi_ostream {
-	/** @brief Pointer to a user-implemented write callback
+	/**
+	 * Pointer to a user-implemented write callback. The callback should
+	 * write the exact number of bytes requested.
 	 *
-	 * The callback should write the exact number of bytes requested.
-	 *
-	 * @param stream Pointer to @ref midi_ostream associated with the
-	 * callback.
-	 * @param[in] data Data to be written
-	 * @param size Number of bytes to be written
+	 * @param stream        Pointer to associated #midi_ostream
+	 * @param[in] data      Data to be written
+	 * @param size          Number of bytes to be written
 	 *
 	 * @returns The number of bytes actually written
 	 */
 	size_t (*write_cb)(struct midi_ostream *stream, const char *data,
 			   size_t size);
-	/** @brief Stream capacity (@ref MIDI_STREAM_CAPACITY_UNLIMITED for
-	 * unlimited capacity)
-	 *
-	 * Functon @ref midi_encode will not write more than `capacity` bytes
-	 * to the stream if `capacity` is not set to
-	 * @ref MIDI_STREAM_CAPACITY_UNLIMITED. */
+	/**
+	 * Stream capacity. Function midi_encode() will not write more than
+	 * `capacity` bytes to the stream unless midi_ostream.capacity is set
+	 * to #MIDI_STREAM_CAPACITY_UNLIMITED.
+	 */
 	size_t capacity;
-	/** @brief Optional parameter to be passed to @ref write_cb */
+	/** Optional parameter to be passed to write_cb() */
 	void *param;
 };
 
 void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
 			      size_t size);
 size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
+
+/**@}*/
 
 #ifdef __cplusplus
 }

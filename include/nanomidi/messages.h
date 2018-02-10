@@ -27,137 +27,130 @@
 extern "C" {
 #endif
 
-/** @defgroup messages MIDI Messages
- *
- * @brief MIDI message definitions and data structures
- *
- * @{
+/**
+ * MIDI message definitions and data structures
+ * @defgroup messages MIDI Messages
  */
 
-/** @brief MIDI message types */
+/**@{*/
+
+/** MIDI message types */
 enum midi_type {
-	/** @brief Channel Mode: Note Off */
+	/** Channel Mode: Note Off */
 	MIDI_TYPE_NOTE_OFF = 0x80,
-	/** @brief Channel Mode: Note On */
+	/** Channel Mode: Note On */
 	MIDI_TYPE_NOTE_ON = 0x90,
-	/** @brief Channel Mode: Polyphonic Pressure (Aftertouch) */
+	/** Channel Mode: Polyphonic Pressure (Aftertouch) */
 	MIDI_TYPE_POLYPHONIC_PRESSURE = 0xa0,
-	/** @brief Channel Mode: Control Change */
+	/** Channel Mode: Control Change */
 	MIDI_TYPE_CONTROL_CHANGE = 0xb0,
-	/** @brief Channel Mode: Program Change */
+	/** Channel Mode: Program Change */
 	MIDI_TYPE_PROGRAM_CHANGE = 0xc0,
-	/** @brief Channel Mode: Channel Pressure (Aftertouch) */
+	/** Channel Mode: Channel Pressure (Aftertouch) */
 	MIDI_TYPE_CHANNEL_PRESSURE = 0xd0,
-	/** @brief Channel Mode: Pitch Bend Change */
+	/** Channel Mode: Pitch Bend Change */
 	MIDI_TYPE_PITCH_BEND = 0xe0,
 
-	/** @brief System Common: MIDI Time Code Quarter Time */
+	/** System Common: MIDI Time Code Quarter Time */
 	MIDI_TYPE_TIME_CODE_QUARTER_FRAME = 0xf1,
-	/** @brief System Common: Song Position Pointer */
+	/** System Common: Song Position Pointer */
 	MIDI_TYPE_SONG_POSITION = 0xf2,
-	/** @brief System Common: Song Select */
+	/** System Common: Song Select */
 	MIDI_TYPE_SONG_SELECT = 0xf3,
-	/** @brief System Common: Tune Request */
+	/** System Common: Tune Request */
 	MIDI_TYPE_TUNE_REQUEST = 0xf6,
 
-	/** @brief System Real Time: Timing Clock */
+	/** System Real Time: Timing Clock */
 	MIDI_TYPE_TIMING_CLOCK = 0xf8,
-	/** @brief System Real Time: Start */
+	/** System Real Time: Start */
 	MIDI_TYPE_START = 0xfa,
-	/** @brief System Real Time: Continue */
+	/** System Real Time: Continue */
 	MIDI_TYPE_CONTINUE = 0xfb,
-	/** @brief System Real Time: Stop */
+	/** System Real Time: Stop */
 	MIDI_TYPE_STOP = 0xfc,
-	/** @brief System Real Time: Active Sensing */
+	/** System Real Time: Active Sensing */
 	MIDI_TYPE_ACTIVE_SENSE = 0xfe,
-	/** @brief System Real Time: System Reset */
+	/** System Real Time: System Reset */
 	MIDI_TYPE_SYSTEM_RESET = 0xff,
 
-	/** @brief System Exclusive Message (SysEx) */
+	/** System Exclusive Message (SysEx) */
 	MIDI_TYPE_SYSEX = 0x00,
-	/** @brief Alias for @ref MIDI_TYPE_SYSEX */
+	/** Alias for #MIDI_TYPE_SYSEX */
 	MIDI_TYPE_SYSTEM_EXCLUSIVE = MIDI_TYPE_SYSEX,
 };
 
-/** @brief MIDI message data structure */
+/** MIDI message data structure */
 struct midi_message {
-	/** @brief MIDI message type */
+	/** MIDI message type */
 	enum midi_type type;
-	/** @brief Channel (0-127) for Channel Mode Messages. */
+	/** Channel (0-127) for Channel Mode Messages */
 	uint8_t channel;
-	/** @brief MIDI message data representation */
+
+	/** MIDI message data representation */
 	union data {
-		/** @brief Representation of @ref MIDI_TYPE_NOTE_ON */
+		/** Representation of #MIDI_TYPE_NOTE_ON. If #velocity is set to
+		zero, the message will be interpreted as #MIDI_TYPE_NOTE_OFF. */
 		struct note_on {
-			/** @brief Note code (0-127) */
-			uint8_t note;
-			/** @brief Note velocity (1-127)
-			 *
-			 * Velocity 0 is @ref MIDI_TYPE_NOTE_OFF */
-			uint8_t velocity;
+			uint8_t note; /*!< Note code (0-127) */
+			uint8_t velocity; /*!< Note velocity (1-127) */
 		} note_on;
-		/** @brief Representation of @ref MIDI_TYPE_NOTE_OFF */
+
+		/** Representation of #MIDI_TYPE_NOTE_OFF */
 		struct note_off {
-			/** @brief Note code (0-127) */
-			uint8_t note;
-			/** @brief Note velocity (0-127) */
-			uint8_t velocity;
+			uint8_t note; /*!< Note code (0-127) */
+			uint8_t velocity; /*!< Note velocity (0-127) */
 		} note_off;
-		/** @brief Representation of
-		@ref MIDI_TYPE_POLYPHONIC_PRESSURE */
+
+		/** Representation of #MIDI_TYPE_POLYPHONIC_PRESSURE */
 		struct polyphonic_pressure {
-			/** @brief Note code (0-127) */
-			uint8_t note;
-			/** @brief Pressure value (0-127) */
-			uint8_t pressure;
+			uint8_t note; /*!< Note code (0-127) */
+			uint8_t pressure; /*!< Pressure value (0-127) */
 		} polyphonic_pressure;
-		/** @brief Representation of @ref MIDI_TYPE_CONTROL_CHANGE */
+
+		/** Representation of #MIDI_TYPE_CONTROL_CHANGE */
 		struct control_change {
-			/** @brief Control number (0-127) */
-			uint8_t controller;
-			/** @brief Control value (0-127) */
-			uint8_t value;
+			uint8_t controller; /*!< Control number (0-127) */
+			uint8_t value; /*!< Control value (0-127) */
 		} control_change;
-		/** @brief Representation of @ref MIDI_TYPE_PROGRAM_CHANGE */
+
+		/** Representation of #MIDI_TYPE_PROGRAM_CHANGE */
 		struct program_change {
-			/** @brief Program number (0-127) */
-			uint8_t program;
+			uint8_t program; /*!< Program number (0-127) */
 		} program_change;
-		/** @brief Representation of @ref MIDI_TYPE_CHANNEL_PRESSURE */
+
+		/** Representation of #MIDI_TYPE_CHANNEL_PRESSURE */
 		struct channel_pressure {
-			/** @brief Pressure value (0-127) */
-			uint8_t pressure;
+			uint8_t pressure; /*!< Pressure value (0-127) */
 		} channel_pressure;
-		/** @brief Representation of @ref MIDI_TYPE_PITCH_BEND */
+
+		/** Representation of #MIDI_TYPE_PITCH_BEND */
 		struct pitch_bend {
-			/** @brief Pitch bend change value (0-16383) */
-			uint16_t value;
+			uint16_t value; /*!< Pitch bend change value (0-16383)*/
 		} pitch_bend;
-		/** @brief Representation of
-		@ref MIDI_TYPE_TIME_CODE_QUARTER_FRAME */
+
+		/** Representation of #MIDI_TYPE_TIME_CODE_QUARTER_FRAME */
 		struct time_code_quarter_frame {
-			/** @brief Time code value (0-127) */
-			uint8_t value;
+			uint8_t value; /*< Time code value (0-127) */
 		} time_code_quarter_frame;
-		/** @brief Representation of @ref MIDI_TYPE_SONG_POSITION */
+
+		/** Representation of #MIDI_TYPE_SONG_POSITION */
 		struct song_position {
-			/** @brief Song position pointer (0-16383) */
-			uint16_t position;
+			uint16_t position; /*!<Song position pointer (0-16383)*/
 		} song_position;
-		/** @brief Representation of @ref MIDI_TYPE_SONG_SELECT */
+
+		/** Representation of #MIDI_TYPE_SONG_SELECT */
 		struct song_select {
-			/** @brief Song number (0-127) */
-			uint8_t song;
+			uint8_t song; /*!< Song number (0-127) */
 		} song_select;
-		/** @brief Representation of @ref MIDI_TYPE_SYSEX */
+
+		/**
+		 * Representation of #MIDI_TYPE_SYSEX. Both #data and #length
+		 * do not contain "SOX" and "EOX" bytes. */
 		struct sysex {
-			/** @brief Pointer to SysEx data (excluding "SOX" and
-			"EOX" bytes) */
-			const char *data;
-			/** @brief Length of data in bytes */
-			size_t length;
+			const char *data; /*!< Pointer to SysEx data */
+			size_t length; /*!< Length of data in bytes */
 		} sysex;
-	} /** @brief MIDI message data representation */ data;
+	} data; /*!< MIDI message data representation */
 };
 
 /**@}*/

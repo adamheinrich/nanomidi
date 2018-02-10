@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-/** @brief Unlimited capacity of @ref midi_istream or @ref midi_ostream */
+/** Unlimited capacity of #midi_istream or #midi_ostream */
 #define MIDI_STREAM_CAPACITY_UNLIMITED		(SIZE_MAX)
 
 #ifdef __cplusplus

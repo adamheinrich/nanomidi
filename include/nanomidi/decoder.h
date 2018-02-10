@@ -27,74 +27,74 @@
 extern "C" {
 #endif
 
-/** @brief Buffer for SysEx messages decoding
- * @ingroup decoder
- */
+/** @addtogroup encoder
+ @{ */
+
+/** Buffer for SysEx messages decoding */
 struct midi_sysex_buffer {
-	/** @brief Pointer to a optional buffer allocated by the user
+	/**
+	 * Pointer to a optional buffer allocated by the user.
 	 *
 	 * Can be set to `NULL` if SysEx decoding is not needed. The buffer
 	 * should be large enough to accommodate the largest possible SysEx
-	 * message (excluding "SOX" and "EOX" bytes). */
+	 * message (excluding "SOX" and "EOX" bytes).
+	 */
 	char *data;
-	/** @brief Buffer size */
+	/** Buffer size */
 	size_t size;
 };
 
-
-/** @brief Input stream for @ref midi_decode
+/**
+ * Input stream for midi_decode()
  *
- * Read callback @ref red_cb and stream @ref capacity must be provided by
- * the user. If SysEx decoding is required, it is necessary to provide a buffer
- * in @ref sysex_buffer.
- *
- * Alternatively, it is possible to use @ref midi_istream_from_buffer to create
+ * Read callback read_cb() and stream capacity must be provided by the user.
+ * If SysEx decoding is required, it is necessary to provide a buffer
+ * in #sysex_buffer. It is possible to use midi_istream_from_buffer() to create
  * a stream which reads from a buffer.
- *
- * @ingroup decoder
  */
 struct midi_istream {
-	/** @brief Pointer to a user-implemented read callback
+	/**
+	 * Pointer to a user-implemented read callback. The callback should
+	 * read the exact number of bytes requested.
 	 *
-	 * The callback should read the exact number of bytes requested.
-	 *
-	 * @param stream Pointer to @ref midi_istream associated with the
-	 * callback.
-	 * @param[out] data Data read
-	 * @param size Number of bytes to be read
+	 * @param stream        Pointer to associated #midi_istream
+	 * @param[out] data     Data read
+	 * @param size          Number of bytes to be read
 	 *
 	 * @returns The number of bytes actually read
 	 */
 	size_t (*read_cb)(struct midi_istream *stream, char *data, size_t size);
-	/** @brief Stream capacity (@ref MIDI_STREAM_CAPACITY_UNLIMITED for
-	 * unlimited capacity)
-	 *
-	 * Functon @ref midi_decode will not write more than `capacity` bytes
-	 * to the stream if `capacity` is not set to
-	 * @ref MIDI_STREAM_CAPACITY_UNLIMITED. */
+	/**
+	 * Stream capacity. Function midi_decode() will not write more than
+	 * `capacity` bytes to the stream unless midi_istream.capacity is set
+	 * to #MIDI_STREAM_CAPACITY_UNLIMITED.
+	 */
 	size_t capacity;
-	/** @brief Message data structure filled by the decoder.
-	 *
-	 * Once a message is decoded, @ref midi_decode returns a pointer
-	 * to @ref msg. */
+	/**
+	 * Message data structure filled by the decoder. Once a message is
+	 * decoded, midi_decode() returns pointer to midi_istream.msg.
+	 */
 	struct midi_message msg;
-	/** @brief Message data structure filled by the decoder.
-	 *
-	 * Once a System Real Time Message is decoded, @ref midi_decode returns
-	 * a pointer to @ref rtmsg. */
+	/**
+	 * Message data structure filled by the decoder.
+	 * Once a System Real Time Message is decoded, midi_decode() returns
+	 * pointer to midi_istream.rtmsg.
+	 */
 	struct midi_message rtmsg;
-	/** @brief Buffer for SysEx messages decoding */
+	/** Buffer for SysEx messages decoding */
 	struct midi_sysex_buffer sysex_buffer;
-	/** @brief Number of bytes remaining to complete the current message
-	    (handled internally). */
+	/** Number of bytes remaining to complete the current message
+	(handled internally). */
 	int bytes_left;
-	/** @brief Optional parameter to be passed to @ref read_cb */
+	/** Optional parameter to be passed to read_cb() */
 	void *param;
 };
 
 void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
 			      size_t size);
 struct midi_message *midi_decode(struct midi_istream *stream);
+
+/**@}*/
 
 #ifdef __cplusplus
 }

@@ -17,9 +17,9 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/** @defgroup encoder MIDI Encoder
- *
- * @brief MIDI message encoder
+/**
+ * MIDI message encoder
+ * @defgroup encoder MIDI Encoder
  */
 
 #include <nanomidi/encoder.h>
@@ -41,10 +41,11 @@ static bool prepare_write(struct midi_ostream *stream, size_t length)
 	return false;
 }
 
-/** @brief Encode a single MIDI message
+/**
+ * Encodes a single MIDI message.
  *
- * @param stream Pointer to the @ref midi_ostream structure
- * @param[in] msg Pointer to the @ref midi_message structure to be encoded
+ * @param stream        Pointer to the #midi_ostream structure
+ * @param[in] msg       Pointer to the #midi_message structure to be encoded
  *
  * @return `true` if the message has been encoded, `false` otherwise
  * (either the message type is unknown or the output stream fails to write
