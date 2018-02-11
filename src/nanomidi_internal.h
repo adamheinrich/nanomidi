@@ -20,11 +20,13 @@
 #ifndef NANOMIDI_INTERNAL_H
 #define NANOMIDI_INTERNAL_H
 
-#define DATA_BYTE(data)		((data) & 0x7f)
+#include <nanomidi/messages.h>
 
-enum midi_type_system {
-	MIDI_TYPE_SYSTEM_BASE = 0xf0,
-	MIDI_TYPE_SOX = 0xf0,
+#define DATA_BYTE(data)		((data) & 0x7f)
+#define MIDI_TYPE_SYSTEM_BASE	MIDI_TYPE_SYSEX
+
+enum midi_type_sysex {
+	MIDI_TYPE_SOX = MIDI_TYPE_SYSEX,
 	MIDI_TYPE_EOX = 0xf7,
 };
 

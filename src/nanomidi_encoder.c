@@ -43,7 +43,7 @@ static bool prepare_write(struct midi_ostream *stream, size_t length)
 
 static uint8_t status_byte(const struct midi_message *msg)
 {
-	if (msg->type >= (int)MIDI_TYPE_SYSTEM_BASE)
+	if (msg->type >= MIDI_TYPE_SYSTEM_BASE)
 		return msg->type;
 	else
 		return (uint8_t)((msg->type & 0xf0) | (msg->channel & 0x0f));
@@ -67,6 +67,8 @@ size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 
 	uint8_t buffer[3];
 	size_t length;
+
+	buffer[0] = status_byte(msg);
 
 	switch (msg->type) {
 	case MIDI_TYPE_NOTE_ON:
@@ -124,40 +126,39 @@ size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 	case MIDI_TYPE_SYSTEM_RESET:
 		length = 1;
 		break;
+	case MIDI_TYPE_SYSEX:
+		if (msg->data.sysex.data == NULL)
+			length = 2;
+		else
+			length = msg->data.sysex.length + 2;
+		buffer[1] = MIDI_TYPE_EOX;
+		break;
 	default:
 		length = 0;
 		break;
 	}
 
 	if (length > 0) {
-		buffer[0] = status_byte(msg);
 		if (!prepare_write(stream, length))
 			return false;
 
-		return stream->write_cb(stream, buffer, length);
-	} else if (msg->type == MIDI_TYPE_SYSEX) {
-		buffer[0] = MIDI_TYPE_SOX;
-		buffer[1] = MIDI_TYPE_EOX;
+		if (msg->type == MIDI_TYPE_SYSEX) {
+			size_t n = stream->write_cb(stream, buffer, 1);
 
-		if (msg->data.sysex.data == NULL)
-			length = 2;
-		else
-			length = msg->data.sysex.length + 2;
-
-		if (!prepare_write(stream, length))
-			return false;
-
-		size_t n = stream->write_cb(stream, buffer, 1);
-		if (msg->data.sysex.data != NULL) {
-			const uint8_t *data = msg->data.sysex.data;
-			for (size_t i = 0; i < msg->data.sysex.length; i++) {
-				uint8_t c = DATA_BYTE(data[i]);
-				n += stream->write_cb(stream, &c, 1);
+			if (msg->data.sysex.data != NULL) {
+				const uint8_t *sdata = msg->data.sysex.data;
+				size_t slength = msg->data.sysex.length;
+				for (size_t i = 0; i < slength; i++) {
+					uint8_t c = DATA_BYTE(sdata[i]);
+					n += stream->write_cb(stream, &c, 1);
+				}
 			}
-		}
-		n += stream->write_cb(stream, &buffer[1], 1);
 
-		return n;
+			n += stream->write_cb(stream, &buffer[1], 1);
+			return n;
+		} else {
+			return stream->write_cb(stream, buffer, length);
+		}
 	}
 
 	return false;

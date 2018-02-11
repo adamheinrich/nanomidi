@@ -74,7 +74,7 @@ enum midi_type {
 	MIDI_TYPE_SYSTEM_RESET = 0xff,
 
 	/** System Exclusive Message (SysEx) */
-	MIDI_TYPE_SYSEX = 0x00,
+	MIDI_TYPE_SYSEX = 0xf0,
 	/** Alias for #MIDI_TYPE_SYSEX */
 	MIDI_TYPE_SYSTEM_EXCLUSIVE = MIDI_TYPE_SYSEX,
 };
