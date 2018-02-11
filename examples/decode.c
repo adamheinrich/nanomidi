@@ -28,6 +28,7 @@
 static uint8_t buffer[] = {
 	0x91, 48, 64,		/* NOTE_ON: ch=1, note=48, velocity=64 */
 	49, 64,			/* Running status: note=49, velocity=64 */
+	0xfe,			/* Realtime message (Active Sensing) injected */
 	50, 64,			/* Running status: note=50, velocity=64 */
 	0x80, 48, 0,		/* NOTE_OFF: ch=0, note=48, velocity=0 */
 	0x81, 48, 0xff, 64,	/* NOTE_ON, realtime message (RESET) injected */
