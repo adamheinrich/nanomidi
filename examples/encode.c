@@ -17,7 +17,9 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <nanomidi/decoder.h>
 #include <nanomidi/encoder.h>
 #include "common.h"
@@ -128,13 +130,38 @@ int main(void)
 
 	/* All messages are now encoded in the buffer. */
 
+	char enc_str[256];
+	char dec_str[256];
+
+	int decoded_count = 0;
+	int i = 0;
+
 	printf("\nDecoded messages:\n");
 	while (1) {
 		struct midi_message *message = midi_decode(&istream);
 		if (message == NULL)
 			break;
-		print_msg(message);
+
+		sprint_msg(enc_str, &messages[i]);
+		sprint_msg(dec_str, message);
+
+		if (strcmp(enc_str, dec_str) == 0) {
+			printf("%s\n", dec_str);
+			decoded_count++;
+			i++;
+		} else {
+			printf("Error: Decoded msg '%s' does not match '%s'\n",
+			       dec_str, enc_str);
+			i += 2;
+		}
 	}
+
+	int encoded_count = sizeof(messages)/sizeof(*messages);
+	if (decoded_count == encoded_count)
+		printf("\nAll messages decoded successfully.\n");
+	else
+		printf("\nEncoded %d messages but decoded only %d.\n",
+		       encoded_count, decoded_count);
 
 	return 0;
 }

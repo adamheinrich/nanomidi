@@ -55,7 +55,7 @@ int main(void)
 		size_t length = midi_encode(&ostream, &messages[i]);
 
 		printf("Encoded: ");
-		print_buffer(buffer, length);
+		print_bytes(buffer, length);
 	}
 
 	return 0;

@@ -20,90 +20,120 @@
 #include "common.h"
 #include <stdio.h>
 
-void print_buffer(const void *buffer, size_t length)
+void sprint_bytes(char *buffer, const void *bytes, size_t length)
 {
-	printf("{ ");
+	int n = sprintf(buffer, "{ ");
+	int pos = (n < 0) ? 0 : n;
+
 	if (buffer == NULL) {
-		printf("NULL");
+		n = sprintf(&buffer[pos], "NULL");
+		pos = (n < 0) ? pos : pos+n;
 	} else {
-		const uint8_t *d = buffer;
-		for (size_t i = 0; i < length; i++)
-			printf("0x%02hhx%s", d[i], (i < length-1) ? ", " : "");
+		const uint8_t *d = bytes;
+		for (size_t i = 0; i < length; i++) {
+			char *comma = (i < length-1) ? ", " : "";
+			n = sprintf(&buffer[pos], "0x%02hhx%s", d[i], comma);
+			pos = (n < 0) ? pos : pos+n;
+		}
 	}
-	printf(" }\n");
+
+	sprintf(&buffer[pos], " }");
+}
+
+void sprint_msg(char *buffer, const struct midi_message *msg)
+{
+	int n;
+
+	switch (msg->type) {
+	case MIDI_TYPE_NOTE_ON:
+		sprintf(buffer, "NOTE_ON: ch=%u, note=%u, velocity=%u",
+			msg->channel, msg->data.note_on.note,
+			msg->data.note_on.velocity);
+		break;
+	case MIDI_TYPE_NOTE_OFF:
+		sprintf(buffer, "NOTE_OFF: ch=%u, note=%u, velocity=%u",
+			msg->channel, msg->data.note_off.note,
+			msg->data.note_off.velocity);
+		break;
+	case MIDI_TYPE_POLYPHONIC_PRESSURE:
+		sprintf(buffer,
+			"POLYPHONIC_PRESSURE: ch=%u, note=%u, pressure=%u",
+			msg->channel, msg->data.polyphonic_pressure.note,
+			msg->data.polyphonic_pressure.pressure);
+		break;
+	case MIDI_TYPE_CONTROL_CHANGE:
+		sprintf(buffer,
+			"CONTROL_CHANGE: ch=%u, controller=%u, value=%u",
+			msg->channel, msg->data.control_change.controller,
+			msg->data.control_change.value);
+		break;
+	case MIDI_TYPE_PROGRAM_CHANGE:
+		sprintf(buffer, "PROGRAM_CHANGE: ch=%u, program=%u",
+			msg->channel, msg->data.program_change.program);
+		break;
+	case MIDI_TYPE_CHANNEL_PRESSURE:
+		sprintf(buffer, "CHANNEL_PRESSURE: ch=%u, pressure=%u",
+			msg->channel, msg->data.channel_pressure.pressure);
+		break;
+	case MIDI_TYPE_PITCH_BEND:
+		sprintf(buffer, "PITCH_BEND: ch=%u, value=%u",
+			msg->channel, msg->data.pitch_bend.value);
+		break;
+	case MIDI_TYPE_TIME_CODE_QUARTER_FRAME:
+		sprintf(buffer, "TIME_CODE_QUARTER_FRAME: value=%u",
+			msg->data.time_code_quarter_frame.value);
+		break;
+	case MIDI_TYPE_SONG_POSITION:
+		sprintf(buffer, "SONG_POSITION: position=%u",
+			msg->data.song_position.position);
+		break;
+	case MIDI_TYPE_SONG_SELECT:
+		sprintf(buffer, "SONG_SELECT: song=%u",
+			msg->data.song_select.song);
+		break;
+	case MIDI_TYPE_TUNE_REQUEST:
+		sprintf(buffer, "TUNE_REQUEST");
+		break;
+	case MIDI_TYPE_TIMING_CLOCK:
+		sprintf(buffer, "TIMING_CLOCK");
+		break;
+	case MIDI_TYPE_START:
+		sprintf(buffer, "START");
+		break;
+	case MIDI_TYPE_CONTINUE:
+		sprintf(buffer, "CONTINUE");
+		break;
+	case MIDI_TYPE_STOP:
+		sprintf(buffer, "STOP");
+		break;
+	case MIDI_TYPE_ACTIVE_SENSE:
+		sprintf(buffer, "ACTIVE_SENSE");
+		break;
+	case MIDI_TYPE_SYSTEM_RESET:
+		sprintf(buffer, "SYSTEM_RESET");
+		break;
+	case MIDI_TYPE_SYSEX:
+		n = sprintf(buffer, "SysEx: ");
+		if (n >= 0)
+			sprint_bytes(&buffer[n], msg->data.sysex.data,
+				     msg->data.sysex.length);
+		break;
+	default:
+		sprintf(buffer, "UNKNOWN: 0x%02hhx", msg->type);
+		break;
+	}
+}
+
+void print_bytes(const void *bytes, size_t length)
+{
+	char str[256];
+	sprint_bytes(str, bytes, length);
+	printf("%s\n", str);
 }
 
 void print_msg(const struct midi_message *msg)
 {
-	switch (msg->type) {
-	case MIDI_TYPE_NOTE_ON:
-		printf("NOTE_ON: ch=%u, note=%u, velocity=%u\n", msg->channel,
-		       msg->data.note_on.note, msg->data.note_on.velocity);
-		break;
-	case MIDI_TYPE_NOTE_OFF:
-		printf("NOTE_OFF: ch=%u, note=%u, velocity=%u\n", msg->channel,
-		       msg->data.note_off.note, msg->data.note_off.velocity);
-		break;
-	case MIDI_TYPE_POLYPHONIC_PRESSURE:
-		printf("POLYPHONIC_PRESSURE: ch=%u, note=%u, pressure=%u\n",
-		       msg->channel, msg->data.polyphonic_pressure.note,
-		       msg->data.polyphonic_pressure.pressure);
-		break;
-	case MIDI_TYPE_CONTROL_CHANGE:
-		printf("CONTROL_CHANGE: ch=%u, controller=%u, value=%u\n",
-		       msg->channel, msg->data.control_change.controller,
-		       msg->data.control_change.value);
-		break;
-	case MIDI_TYPE_PROGRAM_CHANGE:
-		printf("PROGRAM_CHANGE: ch=%u, program=%u\n", msg->channel,
-		       msg->data.program_change.program);
-		break;
-	case MIDI_TYPE_CHANNEL_PRESSURE:
-		printf("CHANNEL_PRESSURE: ch=%u, pressure=%u\n", msg->channel,
-		       msg->data.channel_pressure.pressure);
-		break;
-	case MIDI_TYPE_PITCH_BEND:
-		printf("PITCH_BEND: ch=%u, value=%u\n", msg->channel,
-		       msg->data.pitch_bend.value);
-		break;
-	case MIDI_TYPE_TIME_CODE_QUARTER_FRAME:
-		printf("TIME_CODE_QUARTER_FRAME: value=%u\n",
-		       msg->data.time_code_quarter_frame.value);
-		break;
-	case MIDI_TYPE_SONG_POSITION:
-		printf("SONG_POSITION: position=%u\n",
-		       msg->data.song_position.position);
-		break;
-	case MIDI_TYPE_SONG_SELECT:
-		printf("SONG_SELECT: song=%u\n", msg->data.song_select.song);
-		break;
-	case MIDI_TYPE_TUNE_REQUEST:
-		printf("TUNE_REQUEST\n");
-		break;
-	case MIDI_TYPE_TIMING_CLOCK:
-		printf("TIMING_CLOCK\n");
-		break;
-	case MIDI_TYPE_START:
-		printf("START\n");
-		break;
-	case MIDI_TYPE_CONTINUE:
-		printf("CONTINUE\n");
-		break;
-	case MIDI_TYPE_STOP:
-		printf("STOP\n");
-		break;
-	case MIDI_TYPE_ACTIVE_SENSE:
-		printf("ACTIVE_SENSE\n");
-		break;
-	case MIDI_TYPE_SYSTEM_RESET:
-		printf("SYSTEM_RESET\n");
-		break;
-	case MIDI_TYPE_SYSEX:
-		printf("SysEx: ");
-		print_buffer(msg->data.sysex.data, msg->data.sysex.length);
-		break;
-	default:
-		printf("UNKNOWN: 0x%02hhx\n", msg->type);
-		break;
-	}
+	char str[256];
+	sprint_msg(str, msg);
+	printf("%s\n", str);
 }
