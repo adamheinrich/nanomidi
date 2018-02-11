@@ -20,18 +20,15 @@
 #include "common.h"
 #include <stdio.h>
 
-void print_buffer(const char *data, size_t length)
+void print_buffer(const void *buffer, size_t length)
 {
 	printf("{ ");
-	if (data == NULL) {
+	if (buffer == NULL) {
 		printf("NULL");
 	} else {
-		for (size_t i = 0; i < length; i++) {
-			if (i < length-1)
-				printf("0x%02hhx, ", data[i]);
-			else
-				printf("0x%02hhx", data[i]);
-		}
+		const uint8_t *d = buffer;
+		for (size_t i = 0; i < length; i++)
+			printf("0x%02hhx%s", d[i], (i < length-1) ? ", " : "");
 	}
 	printf(" }\n");
 }

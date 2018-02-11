@@ -28,12 +28,12 @@ static char buffer[1024];
 static size_t buffer_wr; /* Write index */
 static size_t buffer_rd; /* Read index */
 
-static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
+static size_t read_buffer(struct midi_istream *stream, void *data, size_t size)
 {
 	(void)stream;
 
 	for (size_t i = 0; i < size; i++) {
-		data[i] = buffer[buffer_rd];
+		((char *)data)[i] = buffer[buffer_rd];
 		if (buffer_rd++ >= buffer_wr)
 			return i;
 	}
@@ -41,13 +41,13 @@ static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
 	return size;
 }
 
-static size_t write_buffer(struct midi_ostream *stream, const char *data,
+static size_t write_buffer(struct midi_ostream *stream, const void *data,
 			   size_t size)
 {
 	(void)stream;
 
 	for (size_t i = 0; i < size; i++) {
-		buffer[buffer_wr] = data[i];
+		buffer[buffer_wr] = ((char *)data)[i];
 		if (buffer_wr++ >= sizeof(buffer))
 			return i;
 	}

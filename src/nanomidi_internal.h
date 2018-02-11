@@ -20,7 +20,7 @@
 #ifndef NANOMIDI_INTERNAL_H
 #define NANOMIDI_INTERNAL_H
 
-#define DATA_BYTE(data)		((char)((data) & 0x7f))
+#define DATA_BYTE(data)		((data) & 0x7f)
 
 enum midi_type_system {
 	MIDI_TYPE_SYSTEM_BASE = 0xf0,

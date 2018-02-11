@@ -41,6 +41,14 @@ static bool prepare_write(struct midi_ostream *stream, size_t length)
 	return false;
 }
 
+static uint8_t status_byte(const struct midi_message *msg)
+{
+	if (msg->type >= (int)MIDI_TYPE_SYSTEM_BASE)
+		return msg->type;
+	else
+		return (uint8_t)((msg->type & 0xf0) | (msg->channel & 0x0f));
+}
+
 /**
  * Encodes a single MIDI message.
  *
@@ -57,7 +65,7 @@ size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 	assert(msg != NULL);
 	assert(stream->write_cb != NULL);
 
-	char buffer[3];
+	uint8_t buffer[3];
 	size_t length;
 
 	switch (msg->type) {
@@ -122,20 +130,14 @@ size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 	}
 
 	if (length > 0) {
-		if (msg->type >= (unsigned int)MIDI_TYPE_SYSTEM_BASE) {
-			buffer[0] = msg->type;
-		} else {
-			buffer[0] = (char)(msg->type & 0xf0);
-			buffer[0] = (char)(buffer[0] | (msg->channel & 0x0f));
-		}
-
+		buffer[0] = status_byte(msg);
 		if (!prepare_write(stream, length))
 			return false;
 
 		return stream->write_cb(stream, buffer, length);
 	} else if (msg->type == MIDI_TYPE_SYSEX) {
-		buffer[0] = (char)MIDI_TYPE_SOX;
-		buffer[1] = (char)MIDI_TYPE_EOX;
+		buffer[0] = MIDI_TYPE_SOX;
+		buffer[1] = MIDI_TYPE_EOX;
 
 		if (msg->data.sysex.data == NULL)
 			length = 2;
@@ -147,8 +149,9 @@ size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 
 		size_t n = stream->write_cb(stream, buffer, 1);
 		if (msg->data.sysex.data != NULL) {
+			const uint8_t *data = msg->data.sysex.data;
 			for (size_t i = 0; i < msg->data.sysex.length; i++) {
-				char c = DATA_BYTE(msg->data.sysex.data[i]);
+				uint8_t c = DATA_BYTE(data[i]);
 				n += stream->write_cb(stream, &c, 1);
 			}
 		}

@@ -25,7 +25,7 @@
 
 #define SYSEX_SUPPORTED		1
 
-static const uint8_t buffer[] = {
+static uint8_t buffer[] = {
 	0x81, 48, 64,		/* NOTE_ON: ch=1, note=48, velocity=64 */
 	49, 64,			/* Running status: note=48, velocity=64 */
 	50, 64,			/* Running status: note=48, velocity=64 */
@@ -38,7 +38,7 @@ static const uint8_t buffer[] = {
 int main(void)
 {
 	struct midi_istream istream;
-	midi_istream_from_buffer(&istream, (char *)buffer, sizeof(buffer));
+	midi_istream_from_buffer(&istream, buffer, sizeof(buffer));
 
 #if SYSEX_SUPPORTED
 	/* A buffer must be allocated to make SysEx decoding work: */

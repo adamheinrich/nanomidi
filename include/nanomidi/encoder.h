@@ -48,7 +48,7 @@ struct midi_ostream {
 	 *
 	 * @returns The number of bytes actually written
 	 */
-	size_t (*write_cb)(struct midi_ostream *stream, const char *data,
+	size_t (*write_cb)(struct midi_ostream *stream, const void *data,
 			   size_t size);
 	/**
 	 * Stream capacity. Function midi_encode() will not write more than
@@ -60,7 +60,7 @@ struct midi_ostream {
 	void *param;
 };
 
-void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
+void midi_ostream_from_buffer(struct midi_ostream *stream, void *buffer,
 			      size_t size);
 size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
 

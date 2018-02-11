@@ -59,7 +59,7 @@ static int data_size(struct midi_message *msg)
 	return length;
 }
 
-static bool decode_data(struct midi_message *msg, char c, int bytes_left)
+static bool decode_data(struct midi_message *msg, uint8_t c, int bytes_left)
 {
 	switch (msg->type) {
 	case MIDI_TYPE_NOTE_ON:
@@ -142,7 +142,7 @@ static bool is_realtime_message(int type)
 	return is_rt;
 }
 
-static bool read_byte(struct midi_istream *stream, char *c)
+static bool read_byte(struct midi_istream *stream, uint8_t *c)
 {
 	if (stream->capacity == 0)
 		return false;
@@ -170,37 +170,36 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 	assert(stream != NULL);
 	assert(stream->read_cb != NULL);
 
-	char c;
+	uint8_t c;
 	while (read_byte(stream, &c)) {
 		bool is_type_byte = ((c & 0x80) != 0);
 		if (is_type_byte) {
-			int type = (c & 0xff);
-			if (is_realtime_message(type)) {
+			if (is_realtime_message(c)) {
 				/* System Real Time Message: */
-				stream->rtmsg.type = type;
+				stream->rtmsg.type = c;
 				return &stream->rtmsg;
-			} else if (type == MIDI_TYPE_SOX) {
+			} else if (c == MIDI_TYPE_SOX) {
 				/* SysEx Message start: */
 				stream->msg.type = MIDI_TYPE_SYSEX;
 				stream->msg.channel = 0;
 				stream->bytes_left = 0;
 				continue;
-			} else if (type == MIDI_TYPE_EOX) {
+			} else if (c == MIDI_TYPE_EOX) {
 				/* SysEx Message end: */
-				char *data = stream->sysex_buffer.data;
+				void *data = stream->sysex_buffer.data;
 				int len = stream->bytes_left;
 				if (len < 0)
 					len = 0;
 				stream->msg.data.sysex.data = data;
 				stream->msg.data.sysex.length = (size_t)len;
 				return &stream->msg;
-			} else if (type >= MIDI_TYPE_SYSTEM_BASE) {
+			} else if (c >= MIDI_TYPE_SYSTEM_BASE) {
 				/* System Common Message: */
-				stream->msg.type = type;
+				stream->msg.type = c;
 				stream->msg.channel = 0;
 			} else {
 				/* Channel Mode Message: */
-				stream->msg.type = (type & 0xf0);
+				stream->msg.type = (c & 0xf0);
 				stream->msg.channel = (c & 0x0f);
 			}
 
@@ -214,7 +213,7 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 			int pos = stream->bytes_left;
 			if (stream->sysex_buffer.data != NULL &&
 			    pos < (int)stream->sysex_buffer.size) {
-				stream->sysex_buffer.data[pos] = c;
+				((uint8_t *)stream->sysex_buffer.data)[pos] = c;
 				stream->bytes_left++;
 			}
 		} else {

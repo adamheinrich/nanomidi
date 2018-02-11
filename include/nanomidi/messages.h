@@ -147,7 +147,7 @@ struct midi_message {
 		 * Representation of #MIDI_TYPE_SYSEX. Both #data and #length
 		 * do not contain "SOX" and "EOX" bytes. */
 		struct sysex {
-			const char *data; /*!< Pointer to SysEx data */
+			const void *data; /*!< Pointer to SysEx data */
 			size_t length; /*!< Length of data in bytes */
 		} sysex;
 	} data; /*!< MIDI message data representation */

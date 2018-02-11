@@ -22,25 +22,25 @@
 #include <assert.h>
 #include <string.h>
 
-static size_t read_buffer(struct midi_istream *stream, char *data, size_t size)
+static size_t read_buffer(struct midi_istream *stream, void *data, size_t size)
 {
-	char *src = (char *)stream->param;
+	uint8_t *src = (uint8_t *)stream->param;
 	stream->param = src+size;
 
 	for (size_t i = 0; i < size; i++)
-		data[i] = src[i];
+		((uint8_t *)data)[i] = src[i];
 
 	return size;
 }
 
-static size_t write_buffer(struct midi_ostream *stream, const char *data,
+static size_t write_buffer(struct midi_ostream *stream, const void *data,
 			   size_t size)
 {
-	char *dst = (char *)stream->param;
+	uint8_t *dst = (uint8_t *)stream->param;
 	stream->param = dst+size;
 
 	for (size_t i = 0; i < size; i++)
-		dst[i] = data[i];
+		dst[i] = ((uint8_t *)data)[i];
 
 	return size;
 }
@@ -58,7 +58,7 @@ static size_t write_buffer(struct midi_ostream *stream, const char *data,
  * @param buffer        Pointer to the buffer to be read from
  * @param size          Buffer size (in bytes)
  */
-void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
+void midi_istream_from_buffer(struct midi_istream *stream, void *buffer,
 			      size_t size)
 {
 	assert(stream != NULL);
@@ -83,7 +83,7 @@ void midi_istream_from_buffer(struct midi_istream *stream, char *buffer,
  * @param buffer        Pointer to the buffer to be written to
  * @param size          Buffer size (in bytes)
  */
-void midi_ostream_from_buffer(struct midi_ostream *stream, char *buffer,
+void midi_ostream_from_buffer(struct midi_ostream *stream, void *buffer,
 			      size_t size)
 {
 	assert(stream != NULL);
