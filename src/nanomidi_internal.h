@@ -24,7 +24,7 @@
 
 enum midi_type_system {
 	MIDI_TYPE_SYSTEM_BASE = 0xf0,
-	MIDI_TYPE_SOX = 0xf1,
+	MIDI_TYPE_SOX = 0xf0,
 	MIDI_TYPE_EOX = 0xf7,
 };
 
