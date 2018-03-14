@@ -20,6 +20,7 @@
 TARGETS := example-encode
 TARGETS += example-decode
 TARGETS += example-buffer
+TARGETS += example-libusb
 
 NANOMIDI_DIR = ..
 
@@ -36,11 +37,16 @@ CFLAGS = -std=c99 -g -Wall -pedantic -I$(NANOMIDI_DIR)/include
 CFLAGS += -Wextra -Wconversion -Wdouble-promotion -Wfloat-conversion
 LDFLAGS = $(CFLAGS)
 
+LIBUSB = libusb-1.0
+
 .PHONY: all
 all: $(TARGETS)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+libusb.o: libusb.c $(HEADERS)
+	$(CC) $(CFLAGS) `pkg-config --cflags $(LIBUSB)` -c $< -o $@
 
 example-encode: $(OBJECTS) encode.o
 	$(CC) $^ $(LDFLAGS) -o $@
@@ -50,6 +56,9 @@ example-decode: $(OBJECTS) decode.o
 
 example-buffer: $(OBJECTS) buffer.o
 	$(CC) $^ $(LDFLAGS) -o $@
+
+example-libusb: $(OBJECTS) libusb.o
+	$(CC) $^ $(LDFLAGS) `pkg-config --libs $(LIBUSB)` -o $@
 
 .PHONY: clean
 clean:
