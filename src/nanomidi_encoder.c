@@ -55,9 +55,7 @@ static uint8_t status_byte(const struct midi_message *msg)
  * @param stream        Pointer to the #midi_ostream structure
  * @param[in] msg       Pointer to the #midi_message structure to be encoded
  *
- * @return `true` if the message has been encoded, `false` otherwise
- * (either the message type is unknown or the output stream fails to write
- * encoded data).
+ * @return The number of bytes encoded.
  */
 size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg)
 {

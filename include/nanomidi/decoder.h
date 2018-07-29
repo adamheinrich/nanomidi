@@ -65,8 +65,8 @@ struct midi_istream {
 	 */
 	size_t (*read_cb)(struct midi_istream *stream, void *data, size_t size);
 	/**
-	 * Stream capacity. Function midi_decode() will not write more than
-	 * `capacity` bytes to the stream unless midi_istream.capacity is set
+	 * Stream capacity. Function midi_decode() will not read more than
+	 * `capacity` bytes from the stream unless midi_istream.capacity is set
 	 * to #MIDI_STREAM_CAPACITY_UNLIMITED.
 	 */
 	size_t capacity;
