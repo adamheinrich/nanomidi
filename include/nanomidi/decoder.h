@@ -90,7 +90,7 @@ struct midi_istream {
 	void *param;
 };
 
-void midi_istream_from_buffer(struct midi_istream *stream, void *buffer,
+void midi_istream_from_buffer(struct midi_istream *stream, const void *buffer,
 			      size_t size);
 struct midi_message *midi_decode(struct midi_istream *stream);
 

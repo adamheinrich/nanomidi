@@ -55,10 +55,10 @@ static size_t write_buffer(struct midi_ostream *stream, const void *data,
  * the function is called right before midi_decode().
  *
  * @param stream        Pointer to the #midi_istream structure to be initialized
- * @param buffer        Pointer to the buffer to be read from
+ * @param[in] buffer    Pointer to the buffer to be read from
  * @param size          Buffer size (in bytes)
  */
-void midi_istream_from_buffer(struct midi_istream *stream, void *buffer,
+void midi_istream_from_buffer(struct midi_istream *stream, const void *buffer,
 			      size_t size)
 {
 	assert(stream != NULL);
@@ -67,7 +67,7 @@ void midi_istream_from_buffer(struct midi_istream *stream, void *buffer,
 	memset(stream, 0, sizeof(struct midi_istream));
 	stream->read_cb = &read_buffer;
 	stream->capacity = size;
-	stream->param = buffer;
+	stream->param = (void *)buffer;
 }
 
 /**
