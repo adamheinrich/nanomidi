@@ -23,6 +23,7 @@
 #include <nanomidi/messages.h>
 
 #define DATA_BYTE(data)		((data) & 0x7f)
+#define USB_BYTE0(cable, cin)	((uint8_t)(((cable) << 4) | ((cin) & 0x0f)))
 #define MIDI_TYPE_SYSTEM_BASE	MIDI_TYPE_SYSEX
 
 enum midi_type_sysex {

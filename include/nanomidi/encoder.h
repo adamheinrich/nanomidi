@@ -63,6 +63,8 @@ struct midi_ostream {
 void midi_ostream_from_buffer(struct midi_ostream *stream, void *buffer,
 			      size_t size);
 size_t midi_encode(struct midi_ostream *stream, const struct midi_message *msg);
+size_t midi_encode_usb(struct midi_ostream *stream,
+		       const struct midi_message *msg, uint8_t cable_number);
 
 /**@}*/
 

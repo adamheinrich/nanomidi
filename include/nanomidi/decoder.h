@@ -93,6 +93,8 @@ struct midi_istream {
 void midi_istream_from_buffer(struct midi_istream *stream, const void *buffer,
 			      size_t size);
 struct midi_message *midi_decode(struct midi_istream *stream);
+struct midi_message *midi_decode_usb(struct midi_istream *stream,
+				     uint8_t *cable_number);
 
 /**@}*/
 

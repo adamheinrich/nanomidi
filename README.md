@@ -18,6 +18,9 @@ Implemented:
  - Support for **System Real Time Messages** (single-byte messages which can
    occur anywhere in the stream)
  - Support for **System Exclusive Messages** (SysEx)
+ - Support for USB MIDI packet format (`midi_encode_usb()` and
+   `midi_decode_usb()`) described in
+   [Universal Serial Bus Device Class Definition for MIDI Devices][6]
 
 ## Examples
 
@@ -41,3 +44,4 @@ See file `COPYING` for details.
 [3]: https://doc.adamh.cz/nanomidi/group__decoder.html
 [4]: https://doc.adamh.cz/nanomidi/structmidi__message.html
 [5]: http://libusb.info/
+[6]: https://www.usb.org/sites/default/files/midi10.pdf
