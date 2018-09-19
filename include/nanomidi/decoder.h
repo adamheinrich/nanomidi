@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-/** @addtogroup encoder
+/** @addtogroup decoder
  @{ */
 
 /** Buffer for SysEx messages decoding */
