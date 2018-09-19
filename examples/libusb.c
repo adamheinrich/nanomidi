@@ -23,10 +23,19 @@
 #include <signal.h>
 #include <libusb.h>
 #include <nanomidi/decoder.h>
+#include <nanomidi/encoder.h>
 #include "common.h"
 
+enum endpoint_direction {
+	EP_IN,
+	EP_OUT,
+};
+
 struct endpoint_table {
-	uint8_t *addresses;
+	struct endpoint {
+		uint8_t address;
+		enum endpoint_direction direction;
+	} *endpoints;
 	size_t length;
 	size_t max_size;
 };
@@ -89,16 +98,28 @@ static bool midi_init(libusb_device_handle *devh,
 					return false;
 				}
 
-				/* Save MIDI IN endpoints to table: */
+				/* Save MIDI IN and OUT endpoints to table: */
 				uint8_t ep, eid;
 				for (eid = 0; eid < id->bNumEndpoints; eid++) {
 					ep = id->endpoint[eid].bEndpointAddress;
-					if ((ep & LIBUSB_ENDPOINT_IN) != 0) {
-						size_t pos = ep_table->length;
-						if (pos > ep_table->max_size)
-							break;
 
-						ep_table->addresses[pos] = ep;
+					size_t pos = ep_table->length;
+					if (pos > ep_table->max_size)
+						break;
+
+					if ((ep & LIBUSB_ENDPOINT_IN)) {
+						ep_table->endpoints[pos] =
+						(struct endpoint) {
+							.address = ep,
+							.direction = EP_IN,
+						};
+						ep_table->length++;
+					} else {
+						ep_table->endpoints[pos] =
+						(struct endpoint) {
+							.address = ep,
+							.direction = EP_OUT,
+						};
 						ep_table->length++;
 					}
 				}
@@ -111,32 +132,76 @@ static bool midi_init(libusb_device_handle *devh,
 	return true;
 }
 
+static void sysex_identity_request(libusb_device_handle *devh,
+				   struct endpoint_table *ep_table)
+{
+	uint8_t buffer[64];
+	int length;
+
+	uint8_t id_request[] = { 0x7e, 0x7f, 0x06, 0x01 };
+
+	struct midi_message msg = {
+		.type = MIDI_TYPE_SYSEX,
+		.data.sysex.data = id_request,
+		.data.sysex.length = sizeof(id_request),
+	};
+
+	for (size_t i = 0; i < ep_table->length; i++) {
+		struct endpoint *ep = &ep_table->endpoints[i];
+		if (ep->direction != EP_OUT)
+			continue;
+
+		struct midi_ostream ostream = { 0 };
+		midi_ostream_from_buffer(&ostream, buffer, sizeof(buffer));
+		int enc_len = (int)midi_encode_usb(&ostream, &msg, 0);
+
+		if (enc_len > 0) {
+			libusb_bulk_transfer(devh, ep->address, buffer, enc_len,
+					     &length, 100);
+		}
+	}
+}
+
 static void midi_run(libusb_device_handle *devh,
 		     struct endpoint_table *ep_table)
 {
-	uint8_t data[4];
+	uint8_t buffer[64];
 	int ret;
 	int length;
+	uint8_t cable_number;
 
 	struct midi_istream istream;
+	midi_istream_from_buffer(&istream, buffer, sizeof(buffer));
+
+	char sysex_buffer[64];
+	istream.sysex_buffer.data = sysex_buffer;
+	istream.sysex_buffer.size = sizeof(sysex_buffer);
+
+	sysex_identity_request(devh, ep_table);
 
 	while (!stop) {
 		/* Bulk read from all available IN endpoints: */
 		for (size_t i = 0; i < ep_table->length; i++) {
-			ret = libusb_bulk_transfer(devh, ep_table->addresses[i],
-						   data, sizeof(data),
-						   &length, 100);
+			struct endpoint *ep = &ep_table->endpoints[i];
+			if (ep->direction != EP_IN)
+				continue;
 
-			/* First byte contains Cable Index Number: */
-			uint8_t cin = (data[0] & 0x0f);
-			if (ret < 0 || length < 4 || cin < 0x08)
+			ret = libusb_bulk_transfer(devh, ep->address,
+						   buffer, sizeof(buffer),
+						   &length, 100);
+			if (ret != 0)
 				continue;
 
 			/* Reset stream and encode MIDI message: */
-			midi_istream_from_buffer(&istream, &data[1], 3);
-			struct midi_message *m = midi_decode(&istream);
-			if (m != NULL)
-				print_msg(m);
+			istream.param = buffer;
+			istream.capacity = (size_t)length;
+
+			struct midi_message *msg;
+			do {
+				msg = midi_decode_usb(&istream, &cable_number);
+				if (msg != NULL)
+					print_msg(msg);
+			} while (msg != NULL);
 		}
 	}
 }
@@ -160,10 +225,10 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	uint8_t addresses[16];
+	struct endpoint endpoints[16];
 	struct endpoint_table ep_table = {
-		.addresses = addresses,
-		.max_size = sizeof(addresses),
+		.endpoints = endpoints,
+		.max_size = sizeof(endpoints)/sizeof(*endpoints),
 	};
 
 	devh = libusb_open_device_with_vid_pid(NULL, vid, pid);
@@ -172,7 +237,7 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Error initializing USB device\n");
 
 		if (ep_table.length == 0)
-			fprintf(stderr, "No MIDI IN endpoints found\n");
+			fprintf(stderr, "No MIDI endpoints found\n");
 		else
 			midi_run(devh, &ep_table);
 
