@@ -17,8 +17,14 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifdef ARDUINO
+#include <../include/nanomidi/decoder.h>
+#include <../include/nanomidi/encoder.h>
+#else
 #include <nanomidi/decoder.h>
 #include <nanomidi/encoder.h>
+#endif
+
 #include <assert.h>
 #include <string.h>
 

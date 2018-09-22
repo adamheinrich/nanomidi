@@ -22,7 +22,12 @@
  * @defgroup encoder MIDI Encoder
  */
 
+#ifdef ARDUINO
+#include <../include/nanomidi/encoder.h>
+#else
 #include <nanomidi/encoder.h>
+#endif
+
 #include <assert.h>
 #include <stdbool.h>
 #include "nanomidi_internal.h"

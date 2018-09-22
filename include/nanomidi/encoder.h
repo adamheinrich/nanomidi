@@ -20,8 +20,13 @@
 #ifndef NANOMIDI_ENCODER_H
 #define NANOMIDI_ENCODER_H
 
+#ifdef ARDUINO
+#include <../include/nanomidi/common.h>
+#include <../include/nanomidi/messages.h>
+#else
 #include <nanomidi/common.h>
 #include <nanomidi/messages.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

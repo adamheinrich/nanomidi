@@ -30,6 +30,17 @@ Example `example-libusb` requires [libusb][5]. On Ubuntu, install it using
 
 	sudo apt-get install libusb-1.0-0-dev
 
+## Arduino library
+
+To use Nanomidi as an Arduino library, simply download it into the usual
+library location:
+
+	cd ~/Arduino/libraries
+	git clone https://github.com/adamheinrich/nanomidi.git
+
+Then, include Nanomidi using `#include <nanomidi_arduino.h>`.
+See `examples/encode_arduino` for example usage.
+
 ## License
 
 Nanomidi is free software: you can redistribute it and/or modify it under the

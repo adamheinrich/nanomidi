@@ -17,22 +17,16 @@
  * along with nanomidi.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NANOMIDI_INTERNAL_H
-#define NANOMIDI_INTERNAL_H
+#ifndef NANOMIDI_ARDUINO_H
+#define NANOMIDI_ARDUINO_H
+
+/* Just a simple header file for compatibility with Arduino library structure */
 
 #ifdef ARDUINO
-#include <../include/nanomidi/messages.h>
-#else
-#include <nanomidi/messages.h>
-#endif
 
-#define DATA_BYTE(data)		((data) & 0x7f)
-#define USB_BYTE0(cable, cin)	((uint8_t)(((cable) << 4) | ((cin) & 0x0f)))
-#define MIDI_TYPE_SYSTEM_BASE	MIDI_TYPE_SYSEX
+#include <../include/nanomidi/encoder.h>
+#include <../include/nanomidi/decoder.h>
 
-enum midi_type_sysex {
-	MIDI_TYPE_SOX = MIDI_TYPE_SYSEX,
-	MIDI_TYPE_EOX = 0xf7,
-};
+#endif /* ARDUINO */
 
-#endif /* NANOMIDI_INTERNAL_H */
+#endif /* NANOMIDI_ARDUINO_H */
