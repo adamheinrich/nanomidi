@@ -1,4 +1,5 @@
 *.o
 examples/example-*
 doc/html
+doc/deploy.sh
 *.sublime-*
