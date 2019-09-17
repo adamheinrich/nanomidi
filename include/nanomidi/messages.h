@@ -83,7 +83,7 @@ enum midi_type {
 struct midi_message {
 	/** MIDI message type */
 	enum midi_type type;
-	/** Channel (0-127) for Channel Mode Messages */
+	/** Channel (1-16) for Channel Mode Messages, 0 for other messages */
 	uint8_t channel;
 
 	/** MIDI message data representation */

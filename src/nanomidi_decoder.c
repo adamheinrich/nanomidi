@@ -205,7 +205,7 @@ struct midi_message *midi_decode(struct midi_istream *stream)
 			} else {
 				/* Channel Mode Message: */
 				stream->msg.type = (c & 0xf0);
-				stream->msg.channel = (c & 0x0f);
+				stream->msg.channel = (uint8_t)((c & 0x0f) + 1);
 			}
 
 			stream->bytes_left = data_size(&stream->msg);

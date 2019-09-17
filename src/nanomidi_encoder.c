@@ -48,10 +48,13 @@ static bool prepare_write(struct midi_ostream *stream, size_t length)
 
 static uint8_t status_byte(const struct midi_message *msg)
 {
-	if (msg->type >= MIDI_TYPE_SYSTEM_BASE)
+	if (msg->type >= MIDI_TYPE_SYSTEM_BASE) {
 		return msg->type;
-	else
-		return (uint8_t)((msg->type & 0xf0) | (msg->channel & 0x0f));
+	} else {
+		/* Channel goes from 1 to 16 but accept zero too: */
+		uint8_t c = (msg->channel > 0) ? (uint8_t)(msg->channel-1) : 0;
+		return (uint8_t)((msg->type & 0xf0) | (c & 0x0f));
+	}
 }
 
 /**
