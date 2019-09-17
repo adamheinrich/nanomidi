@@ -118,7 +118,7 @@ static size_t encode_sysex(struct midi_ostream *stream,
  *
  * @param stream        Pointer to the #midi_ostream structure
  * @param[in] msg       Pointer to the #midi_message structure to be encoded
- * @param cable_number  Cable number (0-16)
+ * @param cable_number  Cable number (0-15)
  *
  * @return The number of bytes encoded (multiples of four).
  */

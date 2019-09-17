@@ -89,7 +89,7 @@ static bool decode_sysex(struct midi_istream *stream, const uint8_t *buffer,
  * as it will become invalid with the next call to midi_decode().
  *
  * @param stream                Pointer to the #midi_istream structure
- * @param[out] cable_number     Decoded cable number (0 to 16)
+ * @param[out] cable_number     Decoded cable number (0 to 15)
  *
  * @return Pointer to a decoded message (allocated in #midi_istream) or `NULL`
  * if the message has not been decoded yet.
